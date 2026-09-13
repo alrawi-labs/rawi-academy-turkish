@@ -3,6 +3,12 @@ export type DerivedWordItem = {
   meaning: string
 }
 
+export type ConjugationItem = {
+  term: string
+  label: string
+  meaning: string
+}
+
 export type WordOfDayData = {
   word: string
   level: string
@@ -12,4 +18,5 @@ export type WordOfDayData = {
   usageAr: string       // NoteCard içindeki Arapça çeviri
   usageNumber?: number  // kartın sol üstündeki numara (varsayılan 1)
   derivedWords: DerivedWordItem[]
+  conjugations: ConjugationItem[]
 }

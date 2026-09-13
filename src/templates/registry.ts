@@ -6,6 +6,7 @@ import WordOfDayPg1 from './word_of_day/Pg1'
 import WordOfDayPg2 from './word_of_day/Pg2'
 import WordOfDayPg3 from './word_of_day/Pg3'
 import WordOfDayPg4 from './word_of_day/Pg4'
+import WordOfDayPg5 from './word_of_day/Pg5'
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T
@@ -41,6 +42,11 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
   word_of_day_pg4: {
     key: 'word_of_day_pg4',
     component: WordOfDayPg4,
+    size: canvasPresets.portrait4x5,
+  },
+  word_of_day_pg5: {
+    key: 'word_of_day_pg5',
+    component: WordOfDayPg5,
     size: canvasPresets.portrait4x5,
   },
 }
