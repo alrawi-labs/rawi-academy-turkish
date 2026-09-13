@@ -1,19 +1,19 @@
-import page1Bg from "../../assets/templates/word_of_day/pg_1.png";
+import meaningBG from "../../assets/templates/word_of_day/meaning.png";
 import WordText from "../../components/canvas/WordText";
 import type { TemplateProps } from "../registry";
 import type { WordOfDayData } from "./types";
 
-type DefinitionData = Pick<WordOfDayData, "word" | "meaning" | "explain">;
+type PgData = Pick<WordOfDayData, "word" | "meaning" | "explain">;
 
-export default function WordOfDayPg1({
+export default function WordOfDayMeaning({
   data,
-}: TemplateProps<DefinitionData>) {
+}: TemplateProps<PgData>) {
   const { word, meaning, explain } = data;
 
   return (
     <div
       className="relative h-full w-full bg-cover bg-center"
-      style={{ backgroundImage: `url(${page1Bg})` }}
+      style={{ backgroundImage: `url(${meaningBG})` }}
     >
       {/* Konum TAHMİNİ - dev server'da görünce birlikte ayarlayacağız */}
 

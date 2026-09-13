@@ -2,11 +2,12 @@ import type { ComponentType } from 'react'
 import type { CanvasSizeValue } from '../design/tokens'
 import { canvasPresets } from '../design/tokens'
 import WordOfDayCover from './word_of_day/Cover'
-import WordOfDayPg1 from './word_of_day/Pg1'
-import WordOfDayPg2 from './word_of_day/Pg2'
-import WordOfDayPg3 from './word_of_day/Pg3'
-import WordOfDayPg4 from './word_of_day/Pg4'
-import WordOfDayPg5 from './word_of_day/Pg5'
+import WordOfDayMeaning from './word_of_day/Meaning'
+import WordOfDayUsageOdd from './word_of_day/UsageOdd'
+import WordOfDayUsageEven from './word_of_day/UsageEven'
+import WordOfDayDerivedWords from './word_of_day/DerivedWords'
+import WordOfDayConjugations from './word_of_day/Conjugations'
+import WordOfDayQuestion from './word_of_day/Question'
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T
@@ -24,29 +25,34 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
     component: WordOfDayCover,
     size: canvasPresets.portrait4x5,
   },
-  word_of_day_pg1: {
-    key: 'word_of_day_pg1',
-    component: WordOfDayPg1,
+  word_of_day_meaning: {
+    key: 'word_of_day_meaning',
+    component: WordOfDayMeaning,
     size: canvasPresets.portrait4x5,
   },
-  word_of_day_pg2: {
-    key: 'word_of_day_pg2',
-    component: WordOfDayPg2,
+  word_of_day_usage_odd: {
+    key: 'word_of_day_usage_odd',
+    component: WordOfDayUsageOdd,
     size: canvasPresets.portrait4x5,
   },
-  word_of_day_pg3: {
-    key: 'word_of_day_pg3',
-    component: WordOfDayPg3,
+  word_of_day_usage_even: {
+    key: 'word_of_day_usage_even',
+    component: WordOfDayUsageEven,
     size: canvasPresets.portrait4x5,
   },
-  word_of_day_pg4: {
-    key: 'word_of_day_pg4',
-    component: WordOfDayPg4,
+  word_of_day_derived_words: {
+    key: 'word_of_day_derived_words',
+    component: WordOfDayDerivedWords,
     size: canvasPresets.portrait4x5,
   },
-  word_of_day_pg5: {
-    key: 'word_of_day_pg5',
-    component: WordOfDayPg5,
+  word_of_day_conjugations: {
+    key: 'word_of_day_conjugations',
+    component: WordOfDayConjugations,
+    size: canvasPresets.portrait4x5,
+  },
+  word_of_day_question: {
+    key: 'word_of_day_question',
+    component: WordOfDayQuestion,
     size: canvasPresets.portrait4x5,
   },
 }

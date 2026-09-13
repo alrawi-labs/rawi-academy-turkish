@@ -1,6 +1,5 @@
 // src/templates/word_of_day/Cover.tsx
 import coverBg from "../../assets/templates/word_of_day/cover.png";
-import LevelBadge from "../../components/canvas/LevelBadge";
 import WordText from "../../components/canvas/WordText";
 import type { TemplateProps } from "../registry";
 import type { WordOfDayData } from "./types";

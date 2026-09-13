@@ -1,19 +1,17 @@
-import page5Bg from "../../assets/templates/word_of_day/pg_5.png";
-import ConjugationSection from "../../components/canvas/PillListCardSection";
-import NoteCard from "../../components/canvas/NoteCard";
+import DerivedConjugationsBG from "../../assets/templates/word_of_day/derived_conjugations.png";
 import type { TemplateProps } from "../registry";
 import type { WordOfDayData } from "./types";
 import PillListCard from "../../components/canvas/PillListCard";
 
-type Pg5Data = Pick<WordOfDayData, "conjugations">;
+type PgData = Pick<WordOfDayData, "conjugations">;
 
-export default function WordOfDayPg5({ data }: TemplateProps<Pg5Data>) {
+export default function WordOfDayConjugations({ data }: TemplateProps<PgData>) {
   const { conjugations } = data;
 
   return (
     <div
       className="relative h-full w-full bg-cover bg-center"
-      style={{ backgroundImage: `url(${page5Bg})` }}
+      style={{ backgroundImage: `url(${DerivedConjugationsBG})` }}
     >
       <PillListCard
         width={776}

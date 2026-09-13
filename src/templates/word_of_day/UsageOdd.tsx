@@ -1,21 +1,21 @@
-import page2Bg from "../../assets/templates/word_of_day/pg_2.png";
+import UsageOddBG from "../../assets/templates/word_of_day/usageOdd.png";
 import NoteCard from "../../components/canvas/NoteCard";
 import WordText from "../../components/canvas/WordText";
 import type { TemplateProps } from "../registry";
 import type { WordOfDayData } from "./types";
 
-type Pg2Data = Pick<
+type PgData = Pick<
   WordOfDayData,
   "word" | "usageTr" | "usageAr" | "usageNumber"
 >;
 
-export default function WordOfDayPg2({ data }: TemplateProps<Pg2Data>) {
+export default function WordOfDayUsageOdd({ data }: TemplateProps<PgData>) {
   const { word, usageTr, usageAr, usageNumber = 1 } = data;
 
   return (
     <div
       className="relative h-full w-full bg-cover bg-center"
-      style={{ backgroundImage: `url(${page2Bg})` }}
+      style={{ backgroundImage: `url(${UsageOddBG})` }}
     >
       {/* Konum TAHMİNİ - dev server'da görünce birlikte ayarlayacağız */}
 

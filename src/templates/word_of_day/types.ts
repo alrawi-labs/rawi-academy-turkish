@@ -9,6 +9,11 @@ export type ConjugationItem = {
   meaning: string
 }
 
+export type QuizOption = {
+  letter: string   // 'A' | 'B' | 'C' | 'D'
+  text: string
+}
+
 export type WordOfDayData = {
   word: string
   level: string
@@ -19,4 +24,5 @@ export type WordOfDayData = {
   usageNumber?: number  // kartın sol üstündeki numara (varsayılan 1)
   derivedWords: DerivedWordItem[]
   conjugations: ConjugationItem[]
+  quizOptions: QuizOption[]
 }

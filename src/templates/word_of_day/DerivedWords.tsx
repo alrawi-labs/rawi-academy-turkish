@@ -1,19 +1,19 @@
-import page4Bg from "../../assets/templates/word_of_day/pg_4.png";
+import DerivedConjugationsBG from "../../assets/templates/word_of_day/derived_conjugations.png";
 import WordListCard from "../../components/canvas/WordListCard";
 import type { TemplateProps } from "../registry";
 import type { WordOfDayData } from "./types";
 
-type Pg4Data = Pick<WordOfDayData, "derivedWords">;
+type PgData = Pick<WordOfDayData, "derivedWords">;
 
-export default function WordOfDayPg4({
+export default function WordOfDayDerivedWords({
   data,
-}: TemplateProps<Pg4Data>) {
+}: TemplateProps<PgData>) {
   const { derivedWords } = data;
 
   return (
     <div
       className="relative h-full w-full bg-cover bg-center"
-      style={{ backgroundImage: `url(${page4Bg})` }}
+      style={{ backgroundImage: `url(${DerivedConjugationsBG})` }}
     >
       <WordListCard
         width={776}
