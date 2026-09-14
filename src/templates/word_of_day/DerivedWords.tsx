@@ -1,5 +1,6 @@
 import DerivedConjugationsBG from "../../assets/templates/word_of_day/derived_conjugations.png";
 import WordListCard from "../../components/canvas/WordListCard";
+import WordText from "../../components/canvas/WordText";
 import type { TemplateProps } from "../registry";
 import type { WordOfDayData } from "./types";
 
@@ -15,11 +16,25 @@ export default function WordOfDayDerivedWords({
       className="relative h-full w-full bg-cover bg-center"
       style={{ backgroundImage: `url(${DerivedConjugationsBG})` }}
     >
+
+      <WordText
+            maxSize={180}
+            maxWidth={860}
+            padding={24}
+            align="center"
+            top="330px"
+            left="115px"
+            fit="shrink"
+            centerY
+          >
+            كلمات مشتقـة منهــا
+          </WordText>
+
       <WordListCard
-        width={776}
+        width={950}
         items={derivedWords}
-        top="480px"
-        left="150px"
+        top="470px"
+        left="65px"
       />
     </div>
   );

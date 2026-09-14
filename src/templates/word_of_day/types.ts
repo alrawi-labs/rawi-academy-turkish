@@ -5,7 +5,6 @@ export type DerivedWordItem = {
 
 export type ConjugationItem = {
   term: string
-  label: string
   meaning: string
 }
 

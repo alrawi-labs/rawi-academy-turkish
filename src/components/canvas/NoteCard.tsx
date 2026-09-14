@@ -3,14 +3,30 @@ import bodyImg from "../../assets/note_card/body.png";
 import tailImg from "../../assets/note_card/tail.png";
 import { colors, type WordColor } from "../../design/tokens";
 import WordText from "./WordText";
+import Label from "./Label";
+
+// Metin olarak ya düz string, ya da bir Label nesnesi gönderilebilir.
+// String gelirse WordText ile normal metin olarak basılır.
+// Nesne gelirse Label component'iyle (renkli etiket/rozet görünümüyle) basılır.
+export type NoteCardText =
+  | string
+  | {
+      text: string;
+      variant?: "label" | "line" | "badge";
+      backgroundColor?: string;
+      textColor?: string;
+      fontSize?: number;
+      paddingX?: number;
+      paddingY?: number;
+    };
 
 type NoteCardProps = {
   width: number;
   maxBodyHeight?: number; // body'nin ULAŞABİLECEĞİ EN FAZLA yükseklik — içerik azsa daha kısa kalır
-  bodyPaddingY?: number;  // body'nin dikey iç boşluğu (varsayılan 32)
+  bodyPaddingY?: number; // body'nin dikey iç boşluğu (varsayılan 32)
   number?: number;
-  topText: string;
-  bottomText: string;
+  topText: NoteCardText;
+  bottomText: NoteCardText;
   top?: string | number;
   left?: string | number;
   textPadding?: number;
@@ -23,6 +39,47 @@ type NoteCardProps = {
   numberBackgroundColor?: string;
   numberTextColor?: string;
 };
+
+// Gelen değer string mi, Label nesnesi mi diye bakıp doğru component'i basar.
+function renderText(
+  value: NoteCardText,
+  fallback: {
+    size: number;
+    maxWidth: number;
+    maxLines: number;
+    color: WordColor | (string & {});
+    dir?: "ltr" | "rtl";
+  },
+) {
+  if (typeof value === "string") {
+    return (
+      <WordText
+        size={fallback.size}
+        maxWidth={fallback.maxWidth}
+        align="center"
+        fit="wrap"
+        maxLines={fallback.maxLines}
+        color={fallback.color}
+        dir={fallback.dir}
+      >
+        {value}
+      </WordText>
+    );
+  }
+
+  return (
+    <Label
+      variant={value.variant ?? "label"}
+      backgroundColor={value.backgroundColor}
+      textColor={value.textColor}
+      fontSize={value.fontSize ?? fallback.size}
+      paddingX={value.paddingX}
+      paddingY={value.paddingY}
+    >
+      {value.text}
+    </Label>
+  );
+}
 
 export default function NoteCard({
   width,
@@ -43,6 +100,8 @@ export default function NoteCard({
   numberBackgroundColor = colors.word.pink,
   numberTextColor = "white",
 }: NoteCardProps) {
+  const contentWidth = width - textPadding * 2;
+
   const card = (
     <div style={{ position: "relative", width: `${width}px` }}>
       {number !== undefined && (
@@ -97,28 +156,20 @@ export default function NoteCard({
           boxSizing: "border-box",
         }}
       >
-        <WordText
-          size={topSize}
-          maxWidth={width - textPadding * 2}
-          align="center"
-          fit="wrap"
-          maxLines={topMaxLines}
-          color={topTextColor}
-        >
-          {topText}
-        </WordText>
+        {renderText(topText, {
+          size: topSize,
+          maxWidth: contentWidth,
+          maxLines: topMaxLines,
+          color: topTextColor,
+        })}
 
-        <WordText
-          size={bottomSize}
-          maxWidth={width - textPadding * 2}
-          align="center"
-          fit="wrap"
-          maxLines={bottomMaxLines}
-          dir="rtl"
-          color={bottomTextColor}
-        >
-          {bottomText}
-        </WordText>
+        {renderText(bottomText, {
+          size: bottomSize,
+          maxWidth: contentWidth,
+          maxLines: bottomMaxLines,
+          color: bottomTextColor,
+          dir: "rtl",
+        })}
       </div>
 
       {/* Sabit oranlı yırtık alt kenar */}

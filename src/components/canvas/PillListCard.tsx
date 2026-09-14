@@ -38,7 +38,7 @@ type PillListCardProps = {
   lineHeight?: number;
   termColor?: WordColor | (string & {});
   meaningColor?: WordColor | (string & {});
-  stripOffset?: number; 
+  stripOffset?: number;
 };
 
 export default function PillListCard({
@@ -121,32 +121,32 @@ export default function PillListCard({
   }, [items, termWidth, meaningWidth, size, maxLines, lineHeight]);
 
   return (
-  <div
-    style={{
-      position: "absolute",
-      top: `${top}px`,
-      left: `${left}px`,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }}
-  >
-    <div style={{ position: "relative", zIndex: 2 }}>
-      <NoteCard
-        width={width + width / 6}
-        topText={title}
-        bottomText=""
-        topTextColor={titleColor}
-        topSize={titleSize}
-        textPadding={titlePadding}
-        bodyPaddingY={headerBodyPaddingY}
-        number={number}
-        numberBackgroundColor={numberBackgroundColor}
-        numberTextColor={numberTextColor}
-      />
-    </div>
+    <div
+      style={{
+        position: "absolute",
+        top: `${top}px`,
+        left: `${left}px`,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ position: "relative", zIndex: 2 }}>
+        <NoteCard
+          width={width + width / 6}
+          topText={title}
+          bottomText=""
+          topTextColor={titleColor}
+          topSize={titleSize}
+          textPadding={titlePadding}
+          bodyPaddingY={headerBodyPaddingY}
+          number={number}
+          numberBackgroundColor={numberBackgroundColor}
+          numberTextColor={numberTextColor}
+        />
+      </div>
 
-    <div style={{ position: "relative", width: `${width}px`, zIndex: 1 }}>
+      <div style={{ position: "relative", width: `${width}px`, zIndex: 1 }}>
         {/* Gizli ölçüm — term (genişlik bazlı) */}
         <div
           style={{
@@ -202,37 +202,37 @@ export default function PillListCard({
             </div>
           ))}
         </div>
-<div
-  style={{
-    width: "100%", // 90% -> 100% düzeltildi, head/tail ile hizalı olsun diye
-    maxHeight: maxBodyHeight ? `${maxBodyHeight}px` : undefined,
-    overflow: "hidden",
-    backgroundImage: `url(${bodyImg})`,
-    backgroundSize: "100% 100%",
-    backgroundRepeat: "no-repeat",
-    display: "flex",
-    flexDirection: "column",
-    gap: `${rowGap}px`,
-    padding: `${bodyPaddingY}px ${horizontalPadding}px`,
-    boxSizing: "border-box",
-    marginTop: `${stripOffset}px`,
-  }}
->
-  {items.map((item, i) => (
-    <PillRow
-      key={i}
-      term={item.term}
-      label={item.label}
-      meaning={item.meaning}
-      termSize={uniformSize}
-      meaningSize={uniformSize}
-      termWidth={termWidth}
-      meaningWidth={meaningWidth}
-      termColor={termColor}
-      meaningColor={meaningColor}
-    />
-  ))}
-</div>
+        <div
+          style={{
+            width: "100%", // 90% -> 100% düzeltildi, head/tail ile hizalı olsun diye
+            maxHeight: maxBodyHeight ? `${maxBodyHeight}px` : undefined,
+            overflow: "hidden",
+            backgroundImage: `url(${bodyImg})`,
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            display: "flex",
+            flexDirection: "column",
+            gap: `${rowGap}px`,
+            padding: `${bodyPaddingY}px ${horizontalPadding}px`,
+            boxSizing: "border-box",
+            marginTop: `${stripOffset}px`,
+          }}
+        >
+          {items.map((item, i) => (
+            <PillRow
+              key={i}
+              term={item.term}
+              label={item.label}
+              meaning={item.meaning}
+              termSize={uniformSize}
+              meaningSize={uniformSize}
+              termWidth={termWidth}
+              meaningWidth={meaningWidth}
+              termColor={termColor}
+              meaningColor={meaningColor}
+            />
+          ))}
+        </div>
 
         <img src={newTailImg} style={{ width: "100%", display: "block" }} />
       </div>

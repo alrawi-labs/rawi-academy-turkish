@@ -54,7 +54,7 @@ export default function PillRow({
           width: `${meaningWidth}px`,
         }}
       >
-        {label && <Label >{label}</Label>}
+        {label && <Label>{label}</Label>}
 
         <WordText
           size={meaningSize}

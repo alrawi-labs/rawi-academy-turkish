@@ -266,7 +266,7 @@ No single template uses all of this at once. Each template file uses `Pick<WordO
 
 ```ts
 export type DerivedWordItem = { term: string; meaning: string }
-export type ConjugationItem = { term: string; label: string; meaning: string }
+export type ConjugationItem = { term: string; meaning: string }
 export type QuizOption = { letter: string; text: string }
 ```
 
@@ -305,10 +305,12 @@ Shows the list of words that come from today's word, using `WordListCard` (see `
 
 ## Slide 6: `Conjugations.tsx` (registry key: `word_of_day_conjugations`)
 
-**Needs:** `conjugations`
+**Needs:** `conjugations` — an array of exactly 6 `{ term, meaning }` pairs, in a fixed order
 **Background:** `assets/templates/word_of_day/derived_conjugations.png` (same background file as `DerivedWords.tsx` — both slides share one image, only the content on top differs)
 
 Shows the verb's conjugations (forms), using `PillListCard` (see `docs/components/PillListCard.md`), with a title header reading "التصريفات الفعلية" (verb conjugations).
+
+**Fixed labels:** this slide always shows the same 6 grammar categories, in the same order, on every word — noun form, adjective form, wide present tense, continuous present tense, future tense, past tense (`مصدر (اسم)`, `صفة`, `الفعل المضارع الواسع`, `الفعل المضارع المستمر`, `الفعل المستقبل`, `الفعل الماضي`). Because these never change, they are hardcoded inside `Conjugations.tsx` instead of being sent from n8n — see the exact code in the Appendix below. The incoming `conjugations` array only needs to provide `term` and `meaning` for each of the 6 positions; the label is decided by position, not by anything in the data itself, so the 6 items must always be sent in that exact order.
 
 ## Slide 7: `Question.tsx` (registry key: `word_of_day_question`)
 
@@ -505,6 +507,31 @@ This is the card used, for example, to show an example sentence and its translat
 
 Because the middle box's height depends on the content, `NoteCard` can naturally become taller when there's more text, and shorter when there's less — with an optional `maxBodyHeight` used as a ceiling if you don't want it to grow forever.
 
+## Two ways to give `topText` / `bottomText`
+
+`topText` and `bottomText` no longer only accept plain text — each one accepts **either**:
+
+1. **A plain string** — rendered as normal text, using `WordText` (this is the original behavior, still the default and fully backward-compatible).
+2. **A label object** — rendered as a small colored tag/badge instead, using the `Label` component (see `Label.md`). Use this when the top or bottom line should look like a highlighted tag rather than a plain sentence — for example a short grammar note or a "new word" flag.
+
+```ts
+export type NoteCardText =
+  | string
+  | {
+      text: string
+      variant?: "label" | "line" | "badge"
+      backgroundColor?: string
+      textColor?: string
+      fontSize?: number
+      paddingX?: number
+      paddingY?: number
+    }
+```
+
+The component checks the type of the value at runtime: if it's a plain string, it goes through `WordText` (with wrapping and auto-shrinking, exactly as before). If it's an object, it goes through `Label` instead, using `variant`, `backgroundColor`, `textColor`, `fontSize`, `paddingX`, and `paddingY` from that object (any of these you leave out falls back to `Label`'s own defaults for that variant).
+
+**⚠️ Important limitation:** the label-object path does **not** auto-shrink or wrap the way `WordText` does. Only use it for short tag-like text (e.g. `"1. tekil şahıs"`, `"Yeni"`) — long sentences should always be sent as a plain string, so they can wrap and shrink normally.
+
 ## Props
 
 | Prop | Type | Default | What it does |
@@ -513,23 +540,25 @@ Because the middle box's height depends on the content, `NoteCard` can naturally
 | `maxBodyHeight` | number | — | The most the middle section is allowed to grow to. If content is shorter, the card stays shorter |
 | `bodyPaddingY` | number | `0` | Extra empty space added above and below the text, inside the middle section |
 | `number` | number | — | If given, shows a small colored numbered badge in the top-left corner (e.g. "1") |
-| `topText` | text | — | The first line of text (usually Turkish) |
-| `bottomText` | text | — | The second line of text (usually Arabic) |
+| `topText` | `NoteCardText` (string or label object, see above) | — | The first line of content (usually Turkish) |
+| `bottomText` | `NoteCardText` (string or label object, see above) | — | The second line of content (usually Arabic) |
 | `top` / `left` | string or number | — | Where to place the whole card on the canvas |
-| `textPadding` | number | `32` | Horizontal space kept empty on both sides of the text, inside the card |
-| `topMaxLines` / `bottomMaxLines` | number | `2` | Maximum number of lines allowed for each text before the font shrinks |
-| `topSize` / `bottomSize` | number | `44` / `40` | Starting font size for each text |
-| `topTextColor` / `bottomTextColor` | color name | `"pink"` / `"black"` | Text colors |
+| `textPadding` | number | `32` | Horizontal space kept empty on both sides of the text area, inside the card (only applies to the plain-string/`WordText` path) |
+| `topMaxLines` / `bottomMaxLines` | number | `2` | Maximum number of lines allowed for each text before the font shrinks (only applies when that text is a plain string) |
+| `topSize` / `bottomSize` | number | `44` / `40` | Starting font size. Used as `WordText`'s `size` for plain strings, and as the fallback `fontSize` for a label object if it doesn't specify its own |
+| `topTextColor` / `bottomTextColor` | color name | `"pink"` / `"black"` | Text colors, only used for the plain-string/`WordText` path (a label object controls its own color via `textColor`) |
 | `numberBackgroundColor` | string | `colors.word.pink` | Background color of the number badge |
 | `numberTextColor` | string | `"white"` | Text color of the number badge |
 
 ## How the text inside works
 
-Both texts use `WordText` internally, always with `fit="wrap"` and their own `maxLines` — so each text wraps normally, but if it still takes more lines than allowed, its font shrinks (this is the same "wrap + maxLines" behavior explained in the `WordText` guide). The bottom text is always rendered with `dir="rtl"`, since it holds the Arabic meaning.
+- **Plain string path:** uses `WordText` internally, always with `fit="wrap"` and the matching `maxLines` prop — so each text wraps normally, but if it still takes more lines than allowed, its font shrinks (the same "wrap + maxLines" behavior explained in the `WordText` guide). The bottom text is always rendered with `dir="rtl"` on this path, since it usually holds the Arabic meaning.
+- **Label object path:** uses `Label` internally, passing through `variant`, `backgroundColor`, `textColor`, `fontSize`, `paddingX`, and `paddingY` from the object. See `Label.md` for what each of these does and what the three variants (`"label"`, `"line"`, `"badge"`) look like.
 
 ## Example usage
 
 ```tsx
+{/* Both lines as plain text — original behavior, unchanged */}
 <NoteCard
   width={776}
   maxBodyHeight={500}
@@ -541,6 +570,13 @@ Both texts use `WordText` internally, always with `fit="wrap"` and their own `ma
   bottomSize={60}
   top="520px"
   left="260px"
+/>
+
+{/* Top line shown as a small tag instead of plain text */}
+<NoteCard
+  width={776}
+  topText={{ text: "Yeni Kelime", variant: "line", textColor: "black", paddingX: 12, paddingY: 4 }}
+  bottomText={usageAr}
 />
 ```
 
@@ -1071,11 +1107,188 @@ export default function WordText({
 }
 ```
 
+## `src/components/canvas/NoteCard.tsx`
+
+```tsx
+import headImg from "../../assets/note_card/head.png";
+import bodyImg from "../../assets/note_card/body.png";
+import tailImg from "../../assets/note_card/tail.png";
+import { colors, type WordColor } from "../../design/tokens";
+import WordText from "./WordText";
+import Label from "./Label";
+
+export type NoteCardText =
+  | string
+  | {
+      text: string;
+      variant?: "label" | "line" | "badge";
+      backgroundColor?: string;
+      textColor?: string;
+      fontSize?: number;
+      paddingX?: number;
+      paddingY?: number;
+    };
+
+type NoteCardProps = {
+  width: number;
+  maxBodyHeight?: number;
+  bodyPaddingY?: number;
+  number?: number;
+  topText: NoteCardText;
+  bottomText: NoteCardText;
+  top?: string | number;
+  left?: string | number;
+  textPadding?: number;
+  topMaxLines?: number;
+  bottomMaxLines?: number;
+  topSize?: number;
+  bottomSize?: number;
+  topTextColor?: WordColor | (string & {});
+  bottomTextColor?: WordColor | (string & {});
+  numberBackgroundColor?: string;
+  numberTextColor?: string;
+};
+
+function renderText(
+  value: NoteCardText,
+  fallback: {
+    size: number;
+    maxWidth: number;
+    maxLines: number;
+    color: WordColor | (string & {});
+    dir?: "ltr" | "rtl";
+  }
+) {
+  if (typeof value === "string") {
+    return (
+      <WordText
+        size={fallback.size}
+        maxWidth={fallback.maxWidth}
+        align="center"
+        fit="wrap"
+        maxLines={fallback.maxLines}
+        color={fallback.color}
+        dir={fallback.dir}
+      >
+        {value}
+      </WordText>
+    );
+  }
+
+  return (
+    <Label
+      variant={value.variant ?? "label"}
+      backgroundColor={value.backgroundColor}
+      textColor={value.textColor}
+      fontSize={value.fontSize ?? fallback.size}
+    >
+      {value.text}
+    </Label>
+  );
+}
+
+export default function NoteCard({
+  width,
+  maxBodyHeight,
+  bodyPaddingY = 0,
+  number,
+  topText,
+  bottomText,
+  top,
+  left,
+  textPadding = 32,
+  topMaxLines = 2,
+  bottomMaxLines = 2,
+  topSize = 44,
+  bottomSize = 40,
+  topTextColor = "pink",
+  bottomTextColor = "black",
+  numberBackgroundColor = colors.word.pink,
+  numberTextColor = "white",
+}: NoteCardProps) {
+  const contentWidth = width - textPadding * 2;
+
+  const card = (
+    <div style={{ position: "relative", width: `${width}px` }}>
+      {number !== undefined && (
+        <div
+          style={{
+            position: "absolute",
+            top: "-55px",
+            left: "18px",
+            width: "92px",
+            height: "80px",
+            backgroundColor: numberBackgroundColor,
+            color: numberTextColor,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 700,
+            fontSize: "48px",
+            zIndex: 1,
+          }}
+        >
+          {number}
+        </div>
+      )}
+
+      <img
+        src={headImg}
+        style={{ width: "100%", display: "block", position: "relative", zIndex: 2 }}
+      />
+
+      <div
+        style={{
+          width: "100%",
+          maxHeight: maxBodyHeight ? `${maxBodyHeight}px` : undefined,
+          overflow: "hidden",
+          backgroundImage: `url(${bodyImg})`,
+          backgroundSize: "100% 100%",
+          backgroundRepeat: "no-repeat",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "12px",
+          padding: `${bodyPaddingY}px 0`,
+          boxSizing: "border-box",
+        }}
+      >
+        {renderText(topText, {
+          size: topSize,
+          maxWidth: contentWidth,
+          maxLines: topMaxLines,
+          color: topTextColor,
+        })}
+
+        {renderText(bottomText, {
+          size: bottomSize,
+          maxWidth: contentWidth,
+          maxLines: bottomMaxLines,
+          color: bottomTextColor,
+          dir: "rtl",
+        })}
+      </div>
+
+      <img src={tailImg} style={{ width: "100%", display: "block" }} />
+    </div>
+  );
+
+  if (top === undefined && left === undefined) return card;
+
+  return (
+    <div className="absolute" style={{ top, left }}>
+      {card}
+    </div>
+  );
+}
+```
+
 ## `src/templates/word_of_day/types.ts`
 
 ```ts
 export type DerivedWordItem = { term: string; meaning: string }
-export type ConjugationItem = { term: string; label: string; meaning: string }
+export type ConjugationItem = { term: string; meaning: string }
 export type QuizOption = { letter: string; text: string }
 
 export type WordOfDayData = {
@@ -1092,6 +1305,56 @@ export type WordOfDayData = {
 }
 ```
 
+## `src/templates/word_of_day/Conjugations.tsx`
+
+```tsx
+import DerivedConjugationsBG from "../../assets/templates/word_of_day/derived_conjugations.png";
+import type { TemplateProps } from "../registry";
+import type { WordOfDayData } from "./types";
+import PillListCard from "../../components/canvas/PillListCard";
+
+type PgData = Pick<WordOfDayData, "conjugations">;
+
+// These labels always repeat in the same order on every verb — so they are
+// fixed here instead of being sent by n8n on every request.
+const CONJUGATION_LABELS = [
+  "مصدر (اسم)",
+  "صفة",
+  "الفعل المضارع الواسع",
+  "الفعل المضارع المستمر",
+  "الفعل المستقبل",
+  "الفعل الماضي",
+] as const;
+
+export default function WordOfDayConjugations({ data }: TemplateProps<PgData>) {
+  const { conjugations } = data;
+
+  const items = conjugations.map((item, i) => ({
+    term: item.term,
+    meaning: item.meaning,
+    label: CONJUGATION_LABELS[i],
+  }));
+
+  return (
+    <div
+      className="relative h-full w-full bg-cover bg-center"
+      style={{ backgroundImage: `url(${DerivedConjugationsBG})` }}
+    >
+      <PillListCard
+        width={776}
+        top={200}
+        left={95}
+        title="التصريفات الفعلية"
+        items={items}
+        rowGap={20}
+        maxBodyHeight={740}
+        termColor="rose"
+      />
+    </div>
+  );
+}
+```
+
 ---
 
 # Rules for writing new code in this project
@@ -1103,3 +1366,4 @@ export type WordOfDayData = {
 5. For a list of term/meaning pairs where all rows should look visually consistent: use `WordListCard` (no header) or `PillListCard` (with a title header) — never write a new custom measuring loop from scratch.
 6. When converting a fresh measurement taken in Photoshop into code, run it through `fromPsd()` first. Never reuse `fromPsd()` on a number you already found by testing directly in the browser — that number is already correct at the real scale.
 7. Whenever a registry key is renamed or added, the n8n workflow sending render requests must be updated to match — the two are not connected automatically.
+8. When a text field could reasonably be either a plain sentence or a short highlighted tag, follow the `NoteCard` pattern: accept a union type (`string | { text, ...Label props }`), render through `WordText` for strings and through `Label` for objects. Don't build a second custom text-measuring component for this — `Label` already handles the tag look, `WordText` already handles auto-sizing.

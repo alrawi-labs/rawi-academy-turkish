@@ -43,7 +43,7 @@ export default function WordOfDayUsageEven({ data }: TemplateProps<PgData>) {
         bottomSize={60}
         top="520px"
         left="260px"
-        
+        bodyPaddingY={20}
       />
     </div>
   );

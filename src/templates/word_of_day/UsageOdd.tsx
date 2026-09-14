@@ -37,12 +37,13 @@ export default function WordOfDayUsageOdd({ data }: TemplateProps<PgData>) {
         maxBodyHeight={500}
         number={usageNumber}
         topText={usageTr}
-        topSize={60}
+        topSize={65}
         topTextColor="rose"
         bottomText={usageAr}
         bottomSize={60}
         top="520px"
         left="70px"
+        bodyPaddingY={10}
         
       />
     </div>

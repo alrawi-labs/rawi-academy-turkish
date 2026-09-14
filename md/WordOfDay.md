@@ -25,7 +25,7 @@ No single template uses all of this at once. Each template file uses `Pick<WordO
 
 ```ts
 export type DerivedWordItem = { term: string; meaning: string }
-export type ConjugationItem = { term: string; label: string; meaning: string }
+export type ConjugationItem = { term: string; meaning: string }
 export type QuizOption = { letter: string; text: string }
 ```
 
@@ -64,10 +64,27 @@ Shows the list of words that come from today's word, using `WordListCard` (see `
 
 ## Slide 6: `Conjugations.tsx` (registry key: `word_of_day_conjugations`)
 
-**Needs:** `conjugations`
+**Needs:** `conjugations` — an array of exactly 6 `{ term, meaning }` pairs, in a fixed order
 **Background:** `assets/templates/word_of_day/derived_conjugations.png` (same background file as `DerivedWords.tsx` — both slides share one image, only the content on top differs)
 
 Shows the verb's conjugations (forms), using `PillListCard` (see `docs/components/PillListCard.md`), with a title header reading "التصريفات الفعلية" (verb conjugations).
+
+**Fixed labels:** Unlike `DerivedWords`, this slide always shows the same 6 grammar categories, in the same order, on every word:
+
+```ts
+const CONJUGATION_LABELS = [
+  "مصدر (اسم)",
+  "صفة",
+  "الفعل المضارع الواسع",
+  "الفعل المضارع المستمر",
+  "الفعل المستقبل",
+  "الفعل الماضي",
+] as const;
+```
+
+Because these never change, they are hardcoded inside `Conjugations.tsx` instead of being sent from n8n. The incoming `conjugations` data only needs to provide `term` and `meaning` for each of the 6 positions — the template matches position `0` to `مصدر (اسم)`, position `1` to `صفة`, and so on, then passes the combined `{ term, meaning, label }` list into `PillListCard`.
+
+⚠️ This means the 6 items in the `conjugations` array must always be sent **in this exact order** (noun form, adjective form, wide present tense, continuous present tense, future tense, past tense) — the label is decided by position, not by anything in the data itself.
 
 ## Slide 7: `Question.tsx` (registry key: `word_of_day_question`)
 
