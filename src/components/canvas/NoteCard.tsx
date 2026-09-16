@@ -19,7 +19,8 @@ export type NoteCardText =
 
 type NoteCardProps = {
   width: number;
-  maxBodyHeight?: number;
+  maxBodyHeight?: number; // gerçek TAVAN — içerik sığmazsa topText/bottomText'in
+                           // fontu otomatik küçülür, kesme yapılmaz
   bodyPaddingY?: number;
   number?: number;
   topText: NoteCardText;
@@ -27,8 +28,8 @@ type NoteCardProps = {
   top?: string | number;
   left?: string | number;
   textPadding?: number;
-  topMaxLines?: number;
-  bottomMaxLines?: number;
+  topMaxLines?: number;   // maxBodyHeight verilmediğinde kullanılır (eski davranış)
+  bottomMaxLines?: number; // maxBodyHeight verilmediğinde kullanılır (eski davranış)
   topSize?: number;
   bottomSize?: number;
   topTextColor?: WordColor | (string & {});
@@ -37,7 +38,7 @@ type NoteCardProps = {
   bottomAlign?: "left" | "center" | "right";
   numberBackgroundColor?: string;
   numberTextColor?: string;
-  tailImg?: string; // yeni — dışarıdan farklı bir kuyruk görseli verilebilir, verilmezse mevcut default kullanılır
+  tailImg?: string;
 };
 
 function renderText(
@@ -46,6 +47,7 @@ function renderText(
     size: number;
     maxWidth: number;
     maxLines: number;
+    maxHeight?: number; // verilirse maxLines göz ardı edilir (WordText'in kendi önceliği)
     color: WordColor | (string & {});
     dir?: "ltr" | "rtl";
     align: "left" | "center" | "right";
@@ -59,6 +61,7 @@ function renderText(
         align={fallback.align}
         fit="wrap"
         maxLines={fallback.maxLines}
+        maxHeight={fallback.maxHeight}
         color={fallback.color}
         dir={fallback.dir}
       >
@@ -105,6 +108,19 @@ export default function NoteCard({
   tailImg = defaultTailImg,
 }: NoteCardProps) {
   const contentWidth = width - textPadding * 2;
+  const bodyGap = 12; // gövde flex'inin sabit gap değeri, aşağıdaki style ile aynı
+
+  // maxBodyHeight verilmişse, kalan alanı top/bottom arasında eşit paylaştır.
+  // Bu her ikisine de gerçek bir tavan olarak geçilir — kesme değil, otomatik küçültme.
+  let topMaxHeight: number | undefined;
+  let bottomMaxHeight: number | undefined;
+
+  if (maxBodyHeight) {
+    const available = maxBodyHeight - bodyPaddingY * 2 - bodyGap;
+    const half = Math.max(available / 2, 20); // 20px altına düşmesin, aşırı küçülmeyi önlemek için taban
+    topMaxHeight = half;
+    bottomMaxHeight = half;
+  }
 
   const card = (
     <div style={{ position: "relative", width: `${width}px` }}>
@@ -143,8 +159,10 @@ export default function NoteCard({
       <div
         style={{
           width: "100%",
+          // maxHeight artık burada bir güvenlik ağı — asıl kısıtlama topMaxHeight/bottomMaxHeight
+          // ile metin seviyesinde uygulanıyor, bu overflow'u pratikte tetiklememeli
           maxHeight: maxBodyHeight ? `${maxBodyHeight}px` : undefined,
-          overflow: "hidden",
+          overflow: maxBodyHeight ? "hidden" : undefined,
           backgroundImage: `url(${defaultBodyImg})`,
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
@@ -152,7 +170,7 @@ export default function NoteCard({
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: "12px",
+          gap: `${bodyGap}px`,
           padding: `${bodyPaddingY}px 0`,
           boxSizing: "border-box",
         }}
@@ -161,6 +179,7 @@ export default function NoteCard({
           size: topSize,
           maxWidth: contentWidth,
           maxLines: topMaxLines,
+          maxHeight: topMaxHeight,
           color: topTextColor,
           align: topAlign,
         })}
@@ -169,6 +188,7 @@ export default function NoteCard({
           size: bottomSize,
           maxWidth: contentWidth,
           maxLines: bottomMaxLines,
+          maxHeight: bottomMaxHeight,
           color: bottomTextColor,
           dir: "rtl",
           align: bottomAlign,

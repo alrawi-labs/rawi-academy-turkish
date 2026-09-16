@@ -14,6 +14,9 @@ import ColloquialUsageCover from './colloquial_usage/Cover'
 import ColloquialUsageColloquialTR from './colloquial_usage/ColloquialTR'
 import ColloquialUsageTranslate from './colloquial_usage/Translate'
 import ColloquialUsageWordMeanings from './colloquial_usage/WordMeanings'
+import ColloquialUsageConversation from './colloquial_usage/Conversation'
+import ColloquialUsageSaveCta from './colloquial_usage/SaveCta'
+import ColloquialUsageStory from './colloquial_usage/story'
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T
@@ -96,6 +99,21 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
     component: ColloquialUsageWordMeanings,
     size: canvasPresets.carousel,
   },
+  colloquial_usage_conversation: {
+    key: 'colloquial_usage_conversation',
+    component: ColloquialUsageConversation,
+    size: canvasPresets.carousel,
+  },
+  colloquial_usage_save_cta: {
+  key: 'colloquial_usage_save_cta',
+  component: ColloquialUsageSaveCta,
+  size: canvasPresets.carousel,
+},
+colloquial_usage_cover_story: {
+  key: 'colloquial_usage_cover_story',
+  component: ColloquialUsageStory,
+  size: canvasPresets.story, 
+},
 
 }
 
