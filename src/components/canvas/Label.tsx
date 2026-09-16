@@ -1,4 +1,5 @@
 type LabelVariant = 'label' | 'line' | 'badge'
+type LabelAlign = 'left' | 'center' | 'right'
 
 type LabelPreset = {
   backgroundColor: string
@@ -48,10 +49,15 @@ type LabelProps = {
   fontSize?: number
   paddingX?: number
   paddingY?: number
+  paddingTop?: number      // yeni — sadece üst boşluğu override eder
+  paddingBottom?: number   // yeni — sadece alt boşluğu override eder
   borderRadius?: number
   width?: number
   height?: number
-  strokeWidth?: number   // ekstra kalınlık — 0 = kapalı (fontWeight:900'e ek olarak uygulanır)
+  align?: LabelAlign
+  strokeWidth?: number
+  marginTop?: number
+  marginBottom?: number
 }
 
 export default function Label({
@@ -62,10 +68,15 @@ export default function Label({
   fontSize,
   paddingX,
   paddingY,
+  paddingTop,
+  paddingBottom,
   borderRadius,
   width,
   height,
+  align = 'center',
   strokeWidth = 0,
+  marginTop,
+  marginBottom,
 }: LabelProps) {
   const preset = LABEL_VARIANTS[variant]
 
@@ -75,6 +86,9 @@ export default function Label({
     fontSize: fontSize ?? preset.fontSize,
     paddingX: paddingX ?? preset.paddingX,
     paddingY: paddingY ?? preset.paddingY,
+    // paddingTop/paddingBottom verilmezse paddingY'ye (o da verilmezse preset'e) düşer
+    paddingTop: paddingTop ?? paddingY ?? preset.paddingY,
+    paddingBottom: paddingBottom ?? paddingY ?? preset.paddingY,
     borderRadius: borderRadius ?? preset.borderRadius,
     width: width ?? preset.width,
     height: height ?? preset.height,
@@ -82,6 +96,12 @@ export default function Label({
 
   const strokeStyle =
     strokeWidth > 0 ? { WebkitTextStroke: `${strokeWidth}px currentColor` } : undefined
+
+  const justifyContent =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center'
+
+  const alignSelf =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center'
 
   if (resolved.width !== undefined && resolved.height !== undefined) {
     return (
@@ -93,11 +113,13 @@ export default function Label({
           color: resolved.textColor,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent,
           fontWeight: 900,
           fontSize: `${resolved.fontSize}px`,
           borderRadius: `${resolved.borderRadius}px`,
           flexShrink: 0,
+          marginTop: marginTop !== undefined ? `${marginTop}px` : undefined,
+          marginBottom: marginBottom !== undefined ? `${marginBottom}px` : undefined,
           ...strokeStyle,
         }}
       >
@@ -107,13 +129,22 @@ export default function Label({
   }
 
   return (
-    <span style={{ position: 'relative', display: 'inline-block', lineHeight: 1 }}>
+    <span
+      style={{
+        position: 'relative',
+        display: 'inline-block',
+        lineHeight: 1,
+        alignSelf,
+        marginTop: marginTop !== undefined ? `${marginTop}px` : undefined,
+        marginBottom: marginBottom !== undefined ? `${marginBottom}px` : undefined,
+      }}
+    >
       <span
         aria-hidden
         style={{
           position: 'absolute',
-          top: `${-resolved.paddingY}px`,
-          bottom: `${-resolved.paddingY}px`,
+          top: `${-resolved.paddingTop}px`,
+          bottom: `${-resolved.paddingBottom}px`,
           left: `${-resolved.paddingX}px`,
           right: `${-resolved.paddingX}px`,
           backgroundColor: resolved.backgroundColor,

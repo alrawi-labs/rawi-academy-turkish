@@ -8,6 +8,12 @@ import WordOfDayUsageEven from './word_of_day/UsageEven'
 import WordOfDayDerivedWords from './word_of_day/DerivedWords'
 import WordOfDayConjugations from './word_of_day/Conjugations'
 import WordOfDayQuestion from './word_of_day/Question'
+import WordOfDayAnswer from './word_of_day/Answer'
+import WordOfDayClosed from './word_of_day/Closed'
+import ColloquialUsageCover from './colloquial_usage/Cover'
+import ColloquialUsageColloquialTR from './colloquial_usage/ColloquialTR'
+import ColloquialUsageTranslate from './colloquial_usage/Translate'
+import ColloquialUsageWordMeanings from './colloquial_usage/WordMeanings'
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T
@@ -20,6 +26,8 @@ export type TemplateDefinition = {
 }
 
 export const templateRegistry: Record<string, TemplateDefinition> = {
+
+  // ---------- Word of Day ---------- 
   word_of_day_cover: {
     key: 'word_of_day_cover',
     component: WordOfDayCover,
@@ -55,6 +63,40 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
     component: WordOfDayQuestion,
     size: canvasPresets.portrait4x5,
   },
+  word_of_day_answer: {
+    key: 'word_of_day_answer',
+    component: WordOfDayAnswer,
+    size: canvasPresets.portrait4x5,
+  },
+  word_of_day_closed: {
+    key: 'word_of_day_closed',
+    component: WordOfDayClosed,
+    size: canvasPresets.portrait4x5,
+  },
+
+
+  // ---------- Colloquial Usage ---------- 
+  colloquial_usage_cover: {
+    key: 'colloquial_usage_cover',
+    component: ColloquialUsageCover,
+    size: canvasPresets.carousel,
+  },
+  colloquial_usage_colloquial_tr: {
+    key: 'colloquial_usage_colloquial_tr',
+    component: ColloquialUsageColloquialTR,
+    size: canvasPresets.carousel,
+  },
+  colloquial_usage_translate: {
+    key: 'colloquial_usage_translate',
+    component: ColloquialUsageTranslate,
+    size: canvasPresets.carousel,
+  },
+  colloquial_usage_word_meanings: {
+    key: 'colloquial_usage_word_meanings',
+    component: ColloquialUsageWordMeanings,
+    size: canvasPresets.carousel,
+  },
+
 }
 
 export function getTemplate(key: string): TemplateDefinition | undefined {

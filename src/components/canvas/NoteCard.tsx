@@ -1,13 +1,10 @@
-import headImg from "../../assets/note_card/head.png";
-import bodyImg from "../../assets/note_card/body.png";
-import tailImg from "../../assets/note_card/tail.png";
+import defaultHeadImg from "../../assets/note_card/head.png";
+import defaultBodyImg from "../../assets/note_card/body.png";
+import defaultTailImg from "../../assets/note_card/tail.png";
 import { colors, type WordColor } from "../../design/tokens";
 import WordText from "./WordText";
 import Label from "./Label";
 
-// Metin olarak ya düz string, ya da bir Label nesnesi gönderilebilir.
-// String gelirse WordText ile normal metin olarak basılır.
-// Nesne gelirse Label component'iyle (renkli etiket/rozet görünümüyle) basılır.
 export type NoteCardText =
   | string
   | {
@@ -22,11 +19,11 @@ export type NoteCardText =
 
 type NoteCardProps = {
   width: number;
-  maxBodyHeight?: number; // body'nin ULAŞABİLECEĞİ EN FAZLA yükseklik — içerik azsa daha kısa kalır
-  bodyPaddingY?: number; // body'nin dikey iç boşluğu (varsayılan 32)
+  maxBodyHeight?: number;
+  bodyPaddingY?: number;
   number?: number;
   topText: NoteCardText;
-  bottomText: NoteCardText;
+  bottomText?: NoteCardText;
   top?: string | number;
   left?: string | number;
   textPadding?: number;
@@ -36,11 +33,13 @@ type NoteCardProps = {
   bottomSize?: number;
   topTextColor?: WordColor | (string & {});
   bottomTextColor?: WordColor | (string & {});
+  topAlign?: "left" | "center" | "right";
+  bottomAlign?: "left" | "center" | "right";
   numberBackgroundColor?: string;
   numberTextColor?: string;
+  tailImg?: string; // yeni — dışarıdan farklı bir kuyruk görseli verilebilir, verilmezse mevcut default kullanılır
 };
 
-// Gelen değer string mi, Label nesnesi mi diye bakıp doğru component'i basar.
 function renderText(
   value: NoteCardText,
   fallback: {
@@ -49,6 +48,7 @@ function renderText(
     maxLines: number;
     color: WordColor | (string & {});
     dir?: "ltr" | "rtl";
+    align: "left" | "center" | "right";
   },
 ) {
   if (typeof value === "string") {
@@ -56,7 +56,7 @@ function renderText(
       <WordText
         size={fallback.size}
         maxWidth={fallback.maxWidth}
-        align="center"
+        align={fallback.align}
         fit="wrap"
         maxLines={fallback.maxLines}
         color={fallback.color}
@@ -75,6 +75,7 @@ function renderText(
       fontSize={value.fontSize ?? fallback.size}
       paddingX={value.paddingX}
       paddingY={value.paddingY}
+      align={fallback.align}
     >
       {value.text}
     </Label>
@@ -87,7 +88,7 @@ export default function NoteCard({
   bodyPaddingY = 0,
   number,
   topText,
-  bottomText,
+  bottomText = "",
   top,
   left,
   textPadding = 32,
@@ -97,8 +98,11 @@ export default function NoteCard({
   bottomSize = 40,
   topTextColor = "pink",
   bottomTextColor = "black",
+  topAlign = "center",
+  bottomAlign = "center",
   numberBackgroundColor = colors.word.pink,
   numberTextColor = "white",
+  tailImg = defaultTailImg,
 }: NoteCardProps) {
   const contentWidth = width - textPadding * 2;
 
@@ -126,9 +130,8 @@ export default function NoteCard({
         </div>
       )}
 
-      {/* Sabit oranlı üst kapak — yükseklik genişliğe göre otomatik hesaplanır */}
       <img
-        src={headImg}
+        src={defaultHeadImg}
         style={{
           width: "100%",
           display: "block",
@@ -137,14 +140,12 @@ export default function NoteCard({
         }}
       />
 
-      {/* Gövde — yüksekliği içeriğe göre DOĞAL olarak büyür,
-          maxBodyHeight verilmişse bir tavan olarak devreye girer */}
       <div
         style={{
           width: "100%",
           maxHeight: maxBodyHeight ? `${maxBodyHeight}px` : undefined,
           overflow: "hidden",
-          backgroundImage: `url(${bodyImg})`,
+          backgroundImage: `url(${defaultBodyImg})`,
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           display: "flex",
@@ -161,6 +162,7 @@ export default function NoteCard({
           maxWidth: contentWidth,
           maxLines: topMaxLines,
           color: topTextColor,
+          align: topAlign,
         })}
 
         {renderText(bottomText, {
@@ -169,10 +171,10 @@ export default function NoteCard({
           maxLines: bottomMaxLines,
           color: bottomTextColor,
           dir: "rtl",
+          align: bottomAlign,
         })}
       </div>
 
-      {/* Sabit oranlı yırtık alt kenar */}
       <img src={tailImg} style={{ width: "100%", display: "block" }} />
     </div>
   );

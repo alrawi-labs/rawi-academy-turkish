@@ -1,8 +1,13 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { colors, type WordColor } from "../../design/tokens";
 
+export type WordSegment = {
+  text: string;
+  color?: WordColor | (string & {});
+};
+
 type WordTextProps = {
-  children: string;
+  children: string | WordSegment[];
   size?: number;
   maxWidth?: number;
   padding?: number;
@@ -14,107 +19,110 @@ type WordTextProps = {
   centerY?: boolean;
   color?: WordColor | (string & {});
   dir?: "ltr" | "rtl";
-  maxLines?: number; // 'wrap' modunda bu satır sayısını aşarsa font otomatik küçülür
-  lineHeight?: number; // satır yükseklik çarpanı (varsayılan 1.3) — maxLines hesaplaması bunu kullanır
+  maxLines?: number;
+  maxHeight?: number; // NoteCard'ın maxBodyHeight'ı gibi bir tavan — içerik bunu aşarsa
+                       // font küçültülür, aşmıyorsa `size` aynen kullanılır. Verilirse maxLines göz ardı edilir.
+  lineHeight?: number;
 };
 
 export default function WordText({
-  children,
-  size = 72,
-  maxWidth,
-  padding = 0,
-  align = "left",
-  top,
-  left,
-  fit = "wrap",
-  maxSize,
-  centerY = false,
-  color = "black",
-  dir,
-  maxLines,
-  lineHeight = 1.3,
+  children, size = 72, maxWidth, padding = 0, align = "left", top, left,
+  fit = "wrap", maxSize, centerY = false, color = "black", dir, maxLines, maxHeight, lineHeight = 1.3,
 }: WordTextProps) {
   const spanRef = useRef<HTMLSpanElement>(null);
   const cap = maxSize ?? size;
-  const [fittedSize, setFittedSize] = useState(cap); // 'shrink' modu için (genişlik bazlı)
-  const [wrappedSize, setWrappedSize] = useState(size); // 'wrap' + maxLines için (satır bazlı)
-
+  const [fittedSize, setFittedSize] = useState(cap);
+  const [wrappedSize, setWrappedSize] = useState(size);
+  const [heightFitSize, setHeightFitSize] = useState(size);
   const resolvedColor = colors.word[color as WordColor] ?? color;
 
+  const measurableText = Array.isArray(children)
+    ? children.map((s) => s.text).join(" ")
+    : children;
+
   const waitForFonts = (cb: () => void) => {
-    if (
-      typeof document !== "undefined" &&
-      "fonts" in document &&
-      document.fonts.status !== "loaded"
-    ) {
+    if (typeof document !== "undefined" && "fonts" in document && document.fonts.status !== "loaded") {
       document.fonts.ready.then(cb);
     } else {
       cb();
     }
   };
 
-  // --- 'shrink' modu: tek satır, genişliğe göre küçül/büyü ---
   useLayoutEffect(() => {
     if (fit !== "shrink" || !maxWidth || !spanRef.current) return;
-
     let cancelled = false;
     const contentWidth = maxWidth - padding * 2;
-
     const runMeasure = () => {
       if (cancelled || !spanRef.current) return;
       let currentSize = cap;
-
       const measure = () => {
         if (!spanRef.current) return 0;
         spanRef.current.style.fontSize = `${currentSize}px`;
         return spanRef.current.scrollWidth - padding * 2;
       };
-
-      while (measure() > contentWidth && currentSize > 1) {
-        currentSize -= 1;
-      }
-
+      while (measure() > contentWidth && currentSize > 1) currentSize -= 1;
       setFittedSize(currentSize);
     };
-
     waitForFonts(runMeasure);
-    return () => {
-      cancelled = true;
-    };
-  }, [children, maxWidth, padding, fit, cap]);
+    return () => { cancelled = true; };
+  }, [measurableText, maxWidth, padding, fit, cap]);
 
-  // --- 'wrap' modu + maxLines: satır sayısını aşarsa font küçült ---
+  // maxLines yolu — sadece maxHeight verilmediğinde çalışır
   useLayoutEffect(() => {
-    if (fit !== "wrap" || !maxLines || !maxWidth || !spanRef.current) return;
-
+    if (fit !== "wrap" || !maxLines || maxHeight || !maxWidth || !spanRef.current) return;
     let cancelled = false;
-
     const runMeasure = () => {
       if (cancelled || !spanRef.current) return;
       let currentSize = size;
-
       const countLines = () => {
         if (!spanRef.current) return 0;
         spanRef.current.style.fontSize = `${currentSize}px`;
         const lineHeightPx = currentSize * lineHeight;
         return Math.round(spanRef.current.scrollHeight / lineHeightPx);
       };
-
-      while (countLines() > maxLines && currentSize > 1) {
-        currentSize -= 1;
-      }
-
+      while (countLines() > maxLines && currentSize > 1) currentSize -= 1;
       setWrappedSize(currentSize);
     };
-
     waitForFonts(runMeasure);
-    return () => {
-      cancelled = true;
+    return () => { cancelled = true; };
+  }, [measurableText, maxWidth, padding, fit, maxLines, maxHeight, size, lineHeight]);
+
+  // maxHeight yolu — piksel yüksekliğine göre küçültme (maxLines'a benzer, ama satır değil px ölçer)
+  useLayoutEffect(() => {
+    if (fit !== "wrap" || !maxHeight || !maxWidth || !spanRef.current) return;
+    let cancelled = false;
+    const runMeasure = () => {
+      if (cancelled || !spanRef.current) return;
+      let currentSize = size;
+      const measureHeight = () => {
+        if (!spanRef.current) return 0;
+        spanRef.current.style.fontSize = `${currentSize}px`;
+        return spanRef.current.scrollHeight;
+      };
+      while (measureHeight() > maxHeight && currentSize > 1) currentSize -= 1;
+      setHeightFitSize(currentSize);
     };
-  }, [children, maxWidth, padding, fit, maxLines, size, lineHeight]);
+    waitForFonts(runMeasure);
+    return () => { cancelled = true; };
+  }, [measurableText, maxWidth, padding, fit, maxHeight, size, lineHeight]);
 
   const activeFontSize =
-    fit === "shrink" ? fittedSize : maxLines ? wrappedSize : size;
+    fit === "shrink" ? fittedSize
+    : maxHeight ? heightFitSize
+    : maxLines ? wrappedSize
+    : size;
+
+  const content = Array.isArray(children)
+    ? children.map((seg, i) => (
+        <span
+          key={i}
+          style={{ color: colors.word[seg.color as WordColor] ?? seg.color ?? resolvedColor }}
+        >
+          {seg.text}
+          {i < children.length - 1 ? " " : ""}
+        </span>
+      ))
+    : children;
 
   const textSpan = (
     <span
@@ -137,19 +145,14 @@ export default function WordText({
         textAlign: align,
       }}
     >
-      {children}
+      {content}
     </span>
   );
 
-  if (top === undefined && left === undefined) {
-    return textSpan;
-  }
+  if (top === undefined && left === undefined) return textSpan;
 
   return (
-    <div
-      className="absolute"
-      style={{ top, left, transform: centerY ? "translateY(-50%)" : undefined }}
-    >
+    <div className="absolute" style={{ top, left, transform: centerY ? "translateY(-50%)" : undefined }}>
       {textSpan}
     </div>
   );

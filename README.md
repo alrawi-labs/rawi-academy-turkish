@@ -56,39 +56,57 @@ Every template is opened using a URL like this:
 
 
 # Example Links
+## Word of Day
 
-
-## 1. Cover
+### 1. Cover
 ```
 http://localhost:5173/render/word_of_day_cover?data=%7B%22word%22%3A%20%22%C3%96zen%22%2C%20%22level%22%3A%20%22B1%22%7D
 ```
 
-## 2. Meaning
+### 2. Meaning
 ```
 http://localhost:5173/render/word_of_day_meaning?data=%7B%22word%22%3A%20%22%C3%96zen%22%2C%20%22meaning%22%3A%20%22%D8%A7%D9%84%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%22%2C%20%22explain%22%3A%20%22%D8%A7%D9%84%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%20%D9%88%D8%A7%D9%84%D8%A7%D9%87%D8%AA%D9%85%D8%A7%D9%85%20%D8%A8%D8%B4%D9%8A%D8%A1%D8%8C%20%D9%85%D8%B9%20%D8%A7%D9%84%D8%AD%D8%B1%D8%B5%20%D8%B9%D9%84%D9%89%20%D8%A7%D9%84%D9%82%D9%8A%D8%A7%D9%85%20%D8%A8%D9%87%20%D8%A8%D8%B4%D9%83%D9%84%20%D8%AC%D9%8A%D8%AF%22%7D
 ```
 
-## 3. UsageOdd
+### 3. UsageOdd
 ```
 http://localhost:5173/render/word_of_day_usage_odd?data=%7B%22word%22%3A%20%22%C3%96zen%22%2C%20%22usageTr%22%3A%20%22Annem%20yemek%20yaparken%20her%20zaman%20%C3%A7ok%20%C3%B6zen%20g%C3%B6sterir.%22%2C%20%22usageAr%22%3A%20%22%D8%A3%D9%85%D9%8A%20%D8%AF%D8%A7%D8%A6%D9%85%D8%A7%D9%8B%20%D8%AA%D8%B9%D8%AA%D9%86%D9%8A%20%D9%83%D8%AB%D9%8A%D8%B1%D8%A7%D9%8B%20%D8%B9%D9%86%D8%AF%D9%85%D8%A7%20%D8%AA%D8%B7%D8%A8%D8%AE.%22%2C%20%22usageNumber%22%3A%201%7D
 ```
 
-## 4. UsageEven
+### 4. UsageEven
 ```
 http://localhost:5173/render/word_of_day_usage_even?data=%7B%22word%22%3A%20%22%C3%96zen%22%2C%20%22usageTr%22%3A%20%22Bu%20projeye%20%C3%B6zen%20g%C3%B6stermemiz%20gerekiyor.%22%2C%20%22usageAr%22%3A%20%22%D9%8A%D8%AC%D8%A8%20%D8%A3%D9%86%20%D9%86%D8%B9%D8%AA%D9%86%D9%8A%20%D8%A8%D9%87%D8%B0%D8%A7%20%D8%A7%D9%84%D9%85%D8%B4%D8%B1%D9%88%D8%B9.%22%2C%20%22usageNumber%22%3A%202%7D
 ```
 
-## 5. DerivedWords
+### 5. DerivedWords
 ```
 http://localhost:5173/render/word_of_day_derived_words?data=%7B%22derivedWords%22%3A%20%5B%7B%22term%22%3A%20%22%C3%96zenli%22%2C%20%22meaning%22%3A%20%22%D8%AF%D9%82%D9%8A%D9%82%20/%20%D9%85%D9%87%D8%AA%D9%85%20%D8%A8%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zensiz%22%2C%20%22meaning%22%3A%20%22%D9%85%D9%87%D9%85%D9%84%20/%20%D8%BA%D9%8A%D8%B1%20%D8%AF%D9%82%D9%8A%D9%82%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zenmek%22%2C%20%22meaning%22%3A%20%22%D8%A3%D9%86%20%D9%8A%D8%B9%D8%AA%D9%86%D9%8A%20/%20%D9%8A%D9%87%D8%AA%D9%85%22%7D%5D%7D
 ```
 
-## 6. Conjugations
+### 6. Conjugations
 ```
 http://localhost:5173/render/word_of_day_conjugations?data=%7B%22conjugations%22%3A%20%5B%7B%22term%22%3A%20%22%C3%96zen%22%2C%20%22label%22%3A%20%22%D9%85%D8%B5%D8%AF%D8%B1%20%28%D8%A7%D8%B3%D9%85%29%22%2C%20%22meaning%22%3A%20%22%D8%B9%D9%86%D8%A7%D9%8A%D8%A9/%D8%A7%D9%87%D8%AA%D9%85%D8%A7%D9%85%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zenli%22%2C%20%22label%22%3A%20%22%D8%B5%D9%81%D8%A9%22%2C%20%22meaning%22%3A%20%22%D8%AF%D9%82%D9%8A%D9%82/%D9%85%D9%87%D8%AA%D9%85%20%D8%A8%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zenir%22%2C%20%22label%22%3A%20%22%D8%A7%D9%84%D9%81%D8%B9%D9%84%20%D8%A7%D9%84%D9%85%D8%B6%D8%A7%D8%B1%D8%B9%20%D8%A7%D9%84%D9%88%D8%A7%D8%B3%D8%B9%22%2C%20%22meaning%22%3A%20%22%D9%8A%D9%88%D9%84%D9%8A%20%D8%A7%D9%87%D8%AA%D9%85%D8%A7%D9%85%D8%A7%D9%8B/%D9%8A%D8%B9%D8%AA%D9%86%D9%8A%20%D8%A8%D9%80%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zeniyor%22%2C%20%22label%22%3A%20%22%D8%A7%D9%84%D9%81%D8%B9%D9%84%20%D8%A7%D9%84%D9%85%D8%B6%D8%A7%D8%B1%D8%B9%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%85%D8%B1%22%2C%20%22meaning%22%3A%20%22%D9%8A%D9%88%D9%84%D9%8A%20%D8%A7%D9%87%D8%AA%D9%85%D8%A7%D9%85%D8%A7%D9%8B/%D9%8A%D8%B9%D8%AA%D9%86%D9%8A%20%D8%A8%D9%80%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zenecek%22%2C%20%22label%22%3A%20%22%D8%A7%D9%84%D9%81%D8%B9%D9%84%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84%22%2C%20%22meaning%22%3A%20%22%D8%B3%D9%88%D9%81%20%D9%8A%D9%87%D8%AA%D9%85/%D8%B3%D8%B9%D8%AA%D9%86%D9%8A%20%D8%A8%D9%80%22%7D%2C%20%7B%22term%22%3A%20%22%C3%96zendi%22%2C%20%22label%22%3A%20%22%D8%A7%D9%84%D9%81%D8%B9%D9%84%20%D8%A7%D9%84%D9%85%D8%B6%D8%A7%D8%B1%D8%B9%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%85%D8%B1%22%2C%20%22meaning%22%3A%20%22%D8%A7%D9%88%D9%84%D9%89%20%D8%A7%D9%87%D8%AA%D9%85%D8%A7%D9%85/%D8%A7%D8%B9%D8%AA%D9%86%D9%89%20%D8%A8%D9%80%22%7D%5D%7D
 ```
 
-## 7. Question
+### 7. Question
 ```
 http://localhost:5173/render/word_of_day_question?data=%7B%22quizOptions%22%3A%20%5B%7B%22letter%22%3A%20%22A%22%2C%20%22text%22%3A%20%22Dikkat%20ve%20titizlik%20g%C3%B6stermek%22%7D%2C%20%7B%22letter%22%3A%20%22B%22%2C%20%22text%22%3A%20%22Aceleyle%20bir%20i%C5%9Fi%20bitirmek%22%7D%2C%20%7B%22letter%22%3A%20%22C%22%2C%20%22text%22%3A%20%22Bir%20%C5%9Feyi%20tamamen%20unutmak%22%7D%2C%20%7B%22letter%22%3A%20%22D%22%2C%20%22text%22%3A%20%22Yorgun%20ve%20isteksiz%20olmak%22%7D%5D%7D
 ```
+
+### 8. Answer
+```
+http://localhost:5173/render/word_of_day_answer?data=%7B%22correctAnswer%22%3A%20%7B%22letter%22%3A%20%22B%22%2C%20%22text%22%3A%20%22Bu%20i%C5%9Fi%20%C3%B6zenle%20yapt%C4%B1m%22%2C%20%22translation%22%3A%20%22%D9%84%D9%82%D8%AF%20%D9%82%D9%8F%D9%85%D8%AA%D9%8F%20%D8%A8%D9%87%D8%B0%D8%A7%20%D8%A7%D9%84%D8%B9%D9%85%D9%84%20%D8%A8%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%22%7D%7D
+```
+
+
+### 9. Closed
+```
+http://localhost:5173/render/word_of_day_closed?data=%7B%22word%22%3A%20%22%C3%96zen%22%2C%20%22fullMeaning%22%3A%20%22%D8%A7%D9%84%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%20%D8%A3%D9%88%20%D8%A7%D9%84%D8%A7%D9%87%D8%AA%D9%85%D8%A7%D9%85%20%D8%A8%D8%A7%D9%84%D8%AA%D9%81%D8%A7%D8%B5%D9%8A%D9%84%22%7D
+```
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------
