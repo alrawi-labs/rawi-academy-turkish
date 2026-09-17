@@ -20,7 +20,7 @@ export type NoteCardText =
 type NoteCardProps = {
   width: number;
   maxBodyHeight?: number; // gerçek TAVAN — içerik sığmazsa topText/bottomText'in
-                           // fontu otomatik küçülür, kesme yapılmaz
+  // fontu otomatik küçülür, kesme yapılmaz
   bodyPaddingY?: number;
   number?: number;
   topText: NoteCardText;
@@ -28,7 +28,7 @@ type NoteCardProps = {
   top?: string | number;
   left?: string | number;
   textPadding?: number;
-  topMaxLines?: number;   // maxBodyHeight verilmediğinde kullanılır (eski davranış)
+  topMaxLines?: number; // maxBodyHeight verilmediğinde kullanılır (eski davranış)
   bottomMaxLines?: number; // maxBodyHeight verilmediğinde kullanılır (eski davranış)
   topSize?: number;
   bottomSize?: number;
@@ -39,6 +39,7 @@ type NoteCardProps = {
   numberBackgroundColor?: string;
   numberTextColor?: string;
   tailImg?: string;
+  centerX?: boolean;
 };
 
 function renderText(
@@ -106,6 +107,7 @@ export default function NoteCard({
   numberBackgroundColor = colors.word.pink,
   numberTextColor = "white",
   tailImg = defaultTailImg,
+  centerX = false,
 }: NoteCardProps) {
   const contentWidth = width - textPadding * 2;
   const bodyGap = 12; // gövde flex'inin sabit gap değeri, aşağıdaki style ile aynı
@@ -198,6 +200,25 @@ export default function NoteCard({
       <img src={tailImg} style={{ width: "100%", display: "block" }} />
     </div>
   );
+
+  if (top === undefined && left === undefined) {
+    return card;
+  }
+
+    if (centerX) {
+    return (
+      <div
+        className="absolute"
+        style={{
+          top,                
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
+        {card}
+      </div>
+    );
+  }
 
   if (top === undefined && left === undefined) {
     return card;
