@@ -17,6 +17,12 @@ import ColloquialUsageWordMeanings from './colloquial_usage/WordMeanings'
 import ColloquialUsageConversation from './colloquial_usage/Conversation'
 import ColloquialUsageSaveCta from './colloquial_usage/SaveCta'
 import ColloquialUsageStory from './colloquial_usage/story'
+import BeautifulSentenceCover from './BeautifulSentence/Cover'
+import BeautifulSentenceWordMeanings from './BeautifulSentence/WordMeanings'
+import BeautifulSentenceSaveCta from './BeautifulSentence/SaveCta'
+import TranslationTestQuestion from './translation_test/Question'
+import TranslationTestCTA from './translation_test/TranslationTestCTA'
+import TranslationTestAnswer from './translation_test/Answer'
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T
@@ -29,93 +35,125 @@ export type TemplateDefinition = {
 }
 
 export const templateRegistry: Record<string, TemplateDefinition> = {
-
-  // ---------- Word of Day ---------- 
+  // ---------- Word of Day ----------
   word_of_day_cover: {
-    key: 'word_of_day_cover',
+    key: "word_of_day_cover",
     component: WordOfDayCover,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_meaning: {
-    key: 'word_of_day_meaning',
+    key: "word_of_day_meaning",
     component: WordOfDayMeaning,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_usage_odd: {
-    key: 'word_of_day_usage_odd',
+    key: "word_of_day_usage_odd",
     component: WordOfDayUsageOdd,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_usage_even: {
-    key: 'word_of_day_usage_even',
+    key: "word_of_day_usage_even",
     component: WordOfDayUsageEven,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_derived_words: {
-    key: 'word_of_day_derived_words',
+    key: "word_of_day_derived_words",
     component: WordOfDayDerivedWords,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_conjugations: {
-    key: 'word_of_day_conjugations',
+    key: "word_of_day_conjugations",
     component: WordOfDayConjugations,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_question: {
-    key: 'word_of_day_question',
+    key: "word_of_day_question",
     component: WordOfDayQuestion,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_answer: {
-    key: 'word_of_day_answer',
+    key: "word_of_day_answer",
     component: WordOfDayAnswer,
     size: canvasPresets.portrait4x5,
   },
   word_of_day_closed: {
-    key: 'word_of_day_closed',
+    key: "word_of_day_closed",
     component: WordOfDayClosed,
     size: canvasPresets.portrait4x5,
   },
 
-
-  // ---------- Colloquial Usage ---------- 
+  // ---------- Colloquial Usage ----------
   colloquial_usage_cover: {
-    key: 'colloquial_usage_cover',
+    key: "colloquial_usage_cover",
     component: ColloquialUsageCover,
     size: canvasPresets.carousel,
   },
   colloquial_usage_colloquial_tr: {
-    key: 'colloquial_usage_colloquial_tr',
+    key: "colloquial_usage_colloquial_tr",
     component: ColloquialUsageColloquialTR,
     size: canvasPresets.carousel,
   },
   colloquial_usage_translate: {
-    key: 'colloquial_usage_translate',
+    key: "colloquial_usage_translate",
     component: ColloquialUsageTranslate,
     size: canvasPresets.carousel,
   },
   colloquial_usage_word_meanings: {
-    key: 'colloquial_usage_word_meanings',
+    key: "colloquial_usage_word_meanings",
     component: ColloquialUsageWordMeanings,
     size: canvasPresets.carousel,
   },
   colloquial_usage_conversation: {
-    key: 'colloquial_usage_conversation',
+    key: "colloquial_usage_conversation",
     component: ColloquialUsageConversation,
     size: canvasPresets.carousel,
   },
   colloquial_usage_save_cta: {
-  key: 'colloquial_usage_save_cta',
-  component: ColloquialUsageSaveCta,
-  size: canvasPresets.carousel,
-},
-colloquial_usage_cover_story: {
-  key: 'colloquial_usage_cover_story',
-  component: ColloquialUsageStory,
-  size: canvasPresets.story, 
-},
+    key: "colloquial_usage_save_cta",
+    component: ColloquialUsageSaveCta,
+    size: canvasPresets.carousel,
+  },
+  colloquial_usage_cover_story: {
+    key: "colloquial_usage_cover_story",
+    component: ColloquialUsageStory,
+    size: canvasPresets.story,
+  },
 
-}
+  // ---------- Beautiful Sentence ----------
+
+  beautiful_sentence_cover: {
+    key: "beautiful_sentence_cover",
+    component: BeautifulSentenceCover,
+    size: canvasPresets.carousel,
+  },
+  beautiful_sentence_word_meanings: {
+    key: "beautiful_sentence_word_meanings",
+    component: BeautifulSentenceWordMeanings,
+    size: canvasPresets.carousel,
+  },
+  beautiful_sentence_save_cta: {
+    key: "beautiful_sentence_save_cta",
+    component: BeautifulSentenceSaveCta,
+    size: canvasPresets.carousel,
+  },
+
+  // ---------- Translation Test ----------
+  translation_test_question: {
+    key: "translation_test_question",
+    component: TranslationTestQuestion,
+    size: canvasPresets.carousel,
+  },
+  translation_test_cta: {
+    key: "translation_test_cta",
+    component: TranslationTestCTA,
+    size: canvasPresets.carousel,
+  },
+  translation_test_answer: {
+    key: "translation_test_answer",
+    component: TranslationTestAnswer,
+    size: canvasPresets.carousel,
+  },
+};
 
 export function getTemplate(key: string): TemplateDefinition | undefined {
   return templateRegistry[key]
