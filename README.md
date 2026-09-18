@@ -55,6 +55,22 @@ Every template is opened using a URL like this:
 **Never write a color, a font name, or a canvas size directly inside a template.** Always take it from `design/tokens.ts`. This way, if the brand colors change one day, you only need to update one file, and every template updates automatically.
 
 
+
+```js
+const data = {
+  "number": 1,
+  "question": "Metne göre, uzun süre telefon kullanmak insanları nasıl etkileyebilir?",
+  "options": [
+    { "letter": "A", "word": "Dikkatlerini artırabilir" },
+    { "letter": "B", "word": "Gunluk yasamlarini olumlu etkileyebilir" },
+    { "letter": "C", "word": "Dikkatlerini ve gunluk yasamlarini olumsuz etkileyebilir" },
+    { "letter": "D", "word": "Daha fazla bos zaman kazandirabilir" }
+  ]
+}
+
+console.log("http://localhost:5173/render/reading_comprehension_question?data=" + encodeURIComponent(JSON.stringify(data)));
+```
+
 # Example Links
 ## Word of Day
 

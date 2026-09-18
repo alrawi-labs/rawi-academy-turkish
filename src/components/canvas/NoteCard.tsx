@@ -58,6 +58,7 @@ function renderText(
     return (
       <WordText
         size={fallback.size}
+        Width={fallback.maxWidth}
         maxWidth={fallback.maxWidth}
         align={fallback.align}
         fit="wrap"

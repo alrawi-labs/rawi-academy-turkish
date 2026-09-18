@@ -9,6 +9,7 @@ export type WordSegment = {
 type WordTextProps = {
   children: string | WordSegment[];
   size?: number;
+  Width?: number;
   maxWidth?: number;
   padding?: number;
   align?: "left" | "center" | "right";
@@ -18,16 +19,36 @@ type WordTextProps = {
   maxSize?: number;
   centerY?: boolean;
   color?: WordColor | (string & {});
+  backgroundColor?: string;
   dir?: "ltr" | "rtl";
   maxLines?: number;
   maxHeight?: number; // NoteCard'ın maxBodyHeight'ı gibi bir tavan — içerik bunu aşarsa
-                       // font küçültülür, aşmıyorsa `size` aynen kullanılır. Verilirse maxLines göz ardı edilir.
+  // font küçültülür, aşmıyorsa `size` aynen kullanılır. Verilirse maxLines göz ardı edilir.
   lineHeight?: number;
+  centerX?: boolean;
+  strokeWidth?: number;
 };
 
 export default function WordText({
-  children, size = 72, maxWidth, padding = 0, align = "left", top, left,
-  fit = "wrap", maxSize, centerY = false, color = "black", dir, maxLines, maxHeight, lineHeight = 1.3,
+  children,
+  size = 72,
+  Width,
+  maxWidth,
+  padding = 0,
+  align = "left",
+  top,
+  left,
+  fit = "wrap",
+  maxSize,
+  centerY = false,
+  color = "black",
+  backgroundColor,
+  dir,
+  maxLines,
+  maxHeight,
+  lineHeight = 1.3,
+  centerX = false,
+  strokeWidth = 0.6,
 }: WordTextProps) {
   const spanRef = useRef<HTMLSpanElement>(null);
   const cap = maxSize ?? size;
@@ -41,7 +62,11 @@ export default function WordText({
     : children;
 
   const waitForFonts = (cb: () => void) => {
-    if (typeof document !== "undefined" && "fonts" in document && document.fonts.status !== "loaded") {
+    if (
+      typeof document !== "undefined" &&
+      "fonts" in document &&
+      document.fonts.status !== "loaded"
+    ) {
       document.fonts.ready.then(cb);
     } else {
       cb();
@@ -64,12 +89,21 @@ export default function WordText({
       setFittedSize(currentSize);
     };
     waitForFonts(runMeasure);
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [measurableText, maxWidth, padding, fit, cap]);
 
   // maxLines yolu — sadece maxHeight verilmediğinde çalışır
   useLayoutEffect(() => {
-    if (fit !== "wrap" || !maxLines || maxHeight || !maxWidth || !spanRef.current) return;
+    if (
+      fit !== "wrap" ||
+      !maxLines ||
+      maxHeight ||
+      !maxWidth ||
+      !spanRef.current
+    )
+      return;
     let cancelled = false;
     const runMeasure = () => {
       if (cancelled || !spanRef.current) return;
@@ -84,8 +118,19 @@ export default function WordText({
       setWrappedSize(currentSize);
     };
     waitForFonts(runMeasure);
-    return () => { cancelled = true; };
-  }, [measurableText, maxWidth, padding, fit, maxLines, maxHeight, size, lineHeight]);
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    measurableText,
+    maxWidth,
+    padding,
+    fit,
+    maxLines,
+    maxHeight,
+    size,
+    lineHeight,
+  ]);
 
   // maxHeight yolu — piksel yüksekliğine göre küçültme (maxLines'a benzer, ama satır değil px ölçer)
   useLayoutEffect(() => {
@@ -103,20 +148,28 @@ export default function WordText({
       setHeightFitSize(currentSize);
     };
     waitForFonts(runMeasure);
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [measurableText, maxWidth, padding, fit, maxHeight, size, lineHeight]);
 
   const activeFontSize =
-    fit === "shrink" ? fittedSize
-    : maxHeight ? heightFitSize
-    : maxLines ? wrappedSize
-    : size;
+    fit === "shrink"
+      ? fittedSize
+      : maxHeight
+        ? heightFitSize
+        : maxLines
+          ? wrappedSize
+          : size;
 
   const content = Array.isArray(children)
     ? children.map((seg, i) => (
         <span
           key={i}
-          style={{ color: colors.word[seg.color as WordColor] ?? seg.color ?? resolvedColor }}
+          style={{
+            color:
+              colors.word[seg.color as WordColor] ?? seg.color ?? resolvedColor,
+          }}
         >
           {seg.text}
           {i < children.length - 1 ? " " : ""}
@@ -131,11 +184,13 @@ export default function WordText({
       className="font-black"
       style={{
         fontSize: `${activeFontSize}px`,
-        WebkitTextStroke: "0.6px currentColor",
+        WebkitTextStroke: `${strokeWidth}px currentColor`, 
         lineHeight: fit === "wrap" ? lineHeight : undefined,
         color: resolvedColor,
+        backgroundColor,
         display: "block",
-        width: maxWidth ? `${maxWidth}px` : undefined,
+        width: Width ? `${Width}px` : undefined,
+        maxWidth: maxWidth ? `${maxWidth}px` : undefined,
         paddingLeft: padding ? `${padding}px` : undefined,
         paddingRight: padding ? `${padding}px` : undefined,
         boxSizing: "border-box",
@@ -149,11 +204,32 @@ export default function WordText({
     </span>
   );
 
-  if (top === undefined && left === undefined) return textSpan;
+    if (
+    top === undefined &&
+    left === undefined &&
+    !centerX &&
+    !centerY
+  )
+    return textSpan;
 
   return (
-    <div className="absolute" style={{ top, left, transform: centerY ? "translateY(-50%)" : undefined }}>
+    <div
+      className="absolute"
+      style={{
+        top: top ?? (centerY ? "50%" : undefined),
+        left: left ?? (centerX ? "50%" : undefined),
+        transform:
+          centerX && centerY
+            ? "translate(-50%, -50%)"
+            : centerX
+              ? "translateX(-50%)"
+              : centerY
+                ? "translateY(-50%)"
+                : undefined,
+      }}
+    >
       {textSpan}
     </div>
   );
+
 }

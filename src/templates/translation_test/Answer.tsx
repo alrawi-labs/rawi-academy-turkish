@@ -10,7 +10,7 @@ type PgData = Pick<TranslationTestData, "answer">;
 
 export default function TranslationTestAnswer({
   data,
-}: TemplateProps<Record<string, never>>) {
+}: TemplateProps<PgData>) {
   const { answer } = data;
   return (
     <div
