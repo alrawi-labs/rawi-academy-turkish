@@ -49,8 +49,13 @@ type LabelProps = {
   fontSize?: number
   paddingX?: number
   paddingY?: number
-  paddingTop?: number      // yeni — sadece üst boşluğu override eder
-  paddingBottom?: number   // yeni — sadece alt boşluğu override eder
+  paddingTop?: number      // sadece üst boşluğu override eder
+  paddingBottom?: number   // sadece alt boşluğu override eder
+  // paddingTop/paddingBottom'un üzerine eklenen ince ayar — preset'i değiştirmeden
+  // tek bir kullanımda arkaplanı üstten/alttan biraz daha küçültüp büyütmek için.
+  // Pozitif değer arkaplanı o kenardan içeri çeker (küçültür), negatif dışarı taşırır (büyütür).
+  offsetTop?: number
+  offsetBottom?: number
   borderRadius?: number
   width?: number
   height?: number
@@ -70,6 +75,8 @@ export default function Label({
   paddingY,
   paddingTop,
   paddingBottom,
+  offsetTop,
+  offsetBottom,
   borderRadius,
   width,
   height,
@@ -93,6 +100,9 @@ export default function Label({
     width: width ?? preset.width,
     height: height ?? preset.height,
   }
+
+  const resolvedOffsetTop = offsetTop ?? 0
+  const resolvedOffsetBottom = offsetBottom ?? 0
 
   const strokeStyle =
     strokeWidth > 0 ? { WebkitTextStroke: `${strokeWidth}px currentColor` } : undefined
@@ -143,8 +153,8 @@ export default function Label({
         aria-hidden
         style={{
           position: 'absolute',
-          top: `${-resolved.paddingTop}px`,
-          bottom: `${-resolved.paddingBottom}px`,
+          top: `${-resolved.paddingTop + resolvedOffsetTop}px`,
+          bottom: `${-resolved.paddingBottom + resolvedOffsetBottom}px`,
           left: `${-resolved.paddingX}px`,
           right: `${-resolved.paddingX}px`,
           backgroundColor: resolved.backgroundColor,

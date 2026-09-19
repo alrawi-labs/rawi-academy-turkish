@@ -15,6 +15,9 @@ type WordTextProps = {
   align?: "left" | "center" | "right";
   top?: string | number;
   left?: string | number;
+  // left'in tersi: sağ kenarı sabitler, içerik büyüdükçe sola doğru genişler.
+  // left ile birlikte verilmez — right verildiğinde left göz ardı edilir.
+  right?: string | number;
   fit?: "wrap" | "shrink";
   maxSize?: number;
   centerY?: boolean;
@@ -38,6 +41,7 @@ export default function WordText({
   align = "left",
   top,
   left,
+  right,
   fit = "wrap",
   maxSize,
   centerY = false,
@@ -184,7 +188,7 @@ export default function WordText({
       className="font-black"
       style={{
         fontSize: `${activeFontSize}px`,
-        WebkitTextStroke: `${strokeWidth}px currentColor`, 
+        WebkitTextStroke: `${strokeWidth}px currentColor`,
         lineHeight: fit === "wrap" ? lineHeight : undefined,
         color: resolvedColor,
         backgroundColor,
@@ -204,24 +208,32 @@ export default function WordText({
     </span>
   );
 
-    if (
+  if (
     top === undefined &&
     left === undefined &&
+    right === undefined &&
     !centerX &&
     !centerY
   )
     return textSpan;
+
+  // right verilmişse left'i (ve centerX'i) göz ardı ediyoruz — ikisi birlikte
+  // anlamsız olur, kutu tek bir kenardan sabitlenmeli.
+  const horizontal =
+    right !== undefined
+      ? { right }
+      : { left: left ?? (centerX ? "50%" : undefined) };
 
   return (
     <div
       className="absolute"
       style={{
         top: top ?? (centerY ? "50%" : undefined),
-        left: left ?? (centerX ? "50%" : undefined),
+        ...horizontal,
         transform:
-          centerX && centerY
+          centerX && centerY && right === undefined
             ? "translate(-50%, -50%)"
-            : centerX
+            : centerX && right === undefined
               ? "translateX(-50%)"
               : centerY
                 ? "translateY(-50%)"
@@ -231,5 +243,4 @@ export default function WordText({
       {textSpan}
     </div>
   );
-
 }

@@ -58,17 +58,15 @@ Every template is opened using a URL like this:
 
 ```js
 const data = {
-  "number": 1,
-  "question": "Metne göre, uzun süre telefon kullanmak insanları nasıl etkileyebilir?",
-  "options": [
-    { "letter": "A", "word": "Dikkatlerini artırabilir" },
-    { "letter": "B", "word": "Gunluk yasamlarini olumlu etkileyebilir" },
-    { "letter": "C", "word": "Dikkatlerini ve gunluk yasamlarini olumsuz etkileyebilir" },
-    { "letter": "D", "word": "Daha fazla bos zaman kazandirabilir" }
-  ]
+  "word2": "Bakmak",
+  "meaning2": "ينظر / يَنظُر إلى شيء",
+  "explain2": "تُستخدم لما يكون المقصود توجيه النظر أو النظر إلى شيء",
+  "example2": "Bana bak!",
+  "answer2": "! انظر إليّ",
+
 }
 
-console.log("http://localhost:5173/render/reading_comprehension_question?data=" + encodeURIComponent(JSON.stringify(data)));
+console.log("http://localhost:5173/render/difference_tow_words_meaning2?data=" + encodeURIComponent(JSON.stringify(data)));
 ```
 
 # Example Links

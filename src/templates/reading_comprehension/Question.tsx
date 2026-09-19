@@ -36,7 +36,7 @@ export default function ReadingComprehensionQuestion({
         numberBackgroundColor="#ff2daa"
         numberTextColor="white"
         maxBodyHeight={800}
-        bodyPaddingY={40}
+        bodyPaddingY={60}
         horizontalPadding={horizontalPadding}
         titlePadding={30}
       >

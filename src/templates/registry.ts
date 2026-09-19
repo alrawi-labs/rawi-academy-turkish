@@ -34,9 +34,18 @@ import GramerOfDayDailyLife from "./gramer_of_day/DailyLife";
 import GramerOfDayQuiz from "./gramer_of_day/Quiz";
 import GramerOfDayAnswer from "./gramer_of_day/Answer";
 import GramerOfDaySummary from "./gramer_of_day/Summary";
-import ReadingComprehensionCover from './reading_comprehension/Cover';
+import ReadingComprehensionCover from "./reading_comprehension/Cover";
 import ReadingComprehensionPassage from "./reading_comprehension/Passage";
 import ReadingComprehensionQuestion from "./reading_comprehension/Question";
+import ReadingComprehensionAnswers from "./reading_comprehension/Answers";
+import ReadingComprehensionCta from "./reading_comprehension/CTA";
+import ReadingComprehensionStory from "./reading_comprehension/Story";
+import DifferenceTowWordsCover from "./difference_tow_words/Cover";
+import DifferenceTowWordsMeaning1 from "./difference_tow_words/meaning1";
+import DifferenceTowWordsMeaning2 from "./difference_tow_words/meaning2";
+import DifferenceTowWordsSelfTest from "./difference_tow_words/SelfTest";
+import DifferenceTowWordsAnswer from "./difference_tow_words/Answer";
+import DifferenceTowWordsExamples from "./difference_tow_words/Examples";
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T;
@@ -229,7 +238,6 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
     size: canvasPresets.carousel,
   },
 
-
   // ---------- Reading Comprehension ----------
   reading_comprehension_cover: {
     key: "reading_comprehension_cover",
@@ -245,6 +253,54 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
     key: "reading_comprehension_question",
     component: ReadingComprehensionQuestion,
     size: canvasPresets.carousel,
+  },
+  reading_comprehension_answer_list: {
+    key: "reading_comprehension_answer_list",
+    component: ReadingComprehensionAnswers,
+    size: canvasPresets.carousel,
+  },
+  reading_comprehension_cta: {
+    key: "reading_comprehension_cta",
+    component: ReadingComprehensionCta,
+    size: canvasPresets.carousel,
+  },
+  reading_comprehension_story: {
+    key: "reading_comprehension_story",
+    component: ReadingComprehensionStory,
+    size: canvasPresets.story,
+  },
+
+  // ---------- Difference Tow Words ----------
+
+  difference_tow_words_cover: {
+    key: "difference_tow_words_cover",
+    component: DifferenceTowWordsCover,
+    size: canvasPresets.carousel,
+  },
+  difference_tow_words_examples: {
+    key: "difference_tow_words_examples",
+    component: DifferenceTowWordsExamples,
+    size: canvasPresets.carousel,
+  },
+  difference_tow_words_meaning1: {
+    key: "difference_tow_words_meaning1",
+    component: DifferenceTowWordsMeaning1,
+    size: canvasPresets.carousel,
+  },
+  difference_tow_words_meaning2: {
+    key: "difference_tow_words_meaning2",
+    component: DifferenceTowWordsMeaning2,
+    size: canvasPresets.carousel,
+  },
+  difference_tow_words_self_test: {
+    key: "difference_tow_words_self_test",
+    component: DifferenceTowWordsSelfTest,
+    size: canvasPresets.carousel, 
+  },
+  difference_tow_words_answer: {
+    key: "difference_tow_words_answer",
+    component: DifferenceTowWordsAnswer,
+    size: canvasPresets.carousel, 
   },
 };
 
