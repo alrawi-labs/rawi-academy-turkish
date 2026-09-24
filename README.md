@@ -58,11 +58,11 @@ Every template is opened using a URL like this:
 
 ```js
 const data = {
-  "question": "انت بالمطعم وتريد تقول\nانا شبعان\nشنو تقول؟",
-  "options": ["Acım", "Mutluyum", "Tokum", "Tekrar"]
+  "correctIndex": 3,
+  "meaning": "انا شبعان"
 }
 
-console.log("http://localhost:5173/render/quick_test_cover?data=" + encodeURIComponent(JSON.stringify(data)));
+console.log("http://localhost:5173/render/quick_test_answer?data=" + encodeURIComponent(JSON.stringify(data)));
 ```
 
 # Example Links

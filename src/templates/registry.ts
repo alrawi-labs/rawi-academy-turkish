@@ -64,6 +64,7 @@ import FiveWordDetail from "./five_word/Details";
 import FiveWordPoll from "./five_word/Poll";
 import FiveWordStory from "./five_word/Story";
 import QuickTestCover from "./quick_test/Cover";
+import QuickTestAnswer from "./quick_test/Answer";
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T;
@@ -420,6 +421,11 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
   quick_test_cover: {
     key: "quick_test_cover",
     component: QuickTestCover,
+    size: canvasPresets.carousel,
+  },
+  quick_test_answer: {
+    key: "quick_test_answer",
+    component: QuickTestAnswer,
     size: canvasPresets.carousel,
   },
 };

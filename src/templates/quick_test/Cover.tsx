@@ -4,9 +4,10 @@ import { useMemo, useState } from "react";
 import CoverBG from "../../assets/templates/quick_test/background.png";
 import Sentence from "../../components/canvas/Sentence";
 import Label from "../../components/canvas/Label";
-import { colors } from "../../design/tokens";
+import { colors, fonts } from '../../design/tokens';
 import type { TemplateProps } from "../registry";
 import type { QuickTestData } from "./types";
+import WordText from "../../components/canvas/WordText";
 
 // اكثر شي ثلاث خيارات ممكن ياخذ
 
@@ -54,6 +55,13 @@ export default function QuickTestCover({ data }: TemplateProps<CoverData>) {
       className="relative h-full w-full bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: `url(${CoverBG})` }}
     >
+      <WordText top={150} right={50} size={130}>
+        اختبــــار
+      </WordText>
+      <WordText top={240} right={230} size={130}>
+        سريـــــع
+      </WordText>
+
       {/* ---------- Soru: 3 satır, beyaz yazı + pembe kutu ---------- */}
       <Sentence
         size={Q_SIZE}
