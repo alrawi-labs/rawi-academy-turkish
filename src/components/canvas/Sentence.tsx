@@ -33,15 +33,27 @@ type SentenceProps = {
   stagger?: number;
   staggerReverse?: boolean;
 
-  // --- senkronize font boyutu için ---
-  // Bileşen her kendi "doğal" (kısıtlanmamış) en uygun boyutunu hesapladığında
-  // bu callback'i çağırır. Üst bileşen birden fazla Sentence'ın doğal
-  // boyutlarını toplayıp aralarındaki minimumu bulmak için kullanabilir.
   onNaturalSize?: (size: number) => void;
-  // Verilirse, bileşen kendi hesapladığı boyutu KULLANMAZ, doğrudan bunu
-  // render eder. Üst bileşenden gelen "ortak" boyutu uygulamak için.
   sizeOverride?: number;
 };
+
+// Bir elemanın (word-wrap sonrası) kaç görsel satıra yayıldığını sayar.
+// Satır sonu bir width/font-metrics fonksiyonudur, line-height'tan etkilenmez,
+// bu yüzden ölçüm elemanının satır yüksekliği render'dakiyle aynı olmak
+// zorunda değil.
+function countWrappedLines(el: HTMLElement): number {
+  const text = el.textContent;
+  if (!text || text.trim() === "") return 0;
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const rects = Array.from(range.getClientRects());
+  if (rects.length === 0) return 1;
+  const tops = new Set<number>();
+  for (const r of rects) {
+    tops.add(Math.round(r.top));
+  }
+  return Math.max(1, tops.size);
+}
 
 export default function Sentence({
   children,
@@ -84,13 +96,14 @@ export default function Sentence({
 
   const resolvedColor = colors.word[color as WordColor] ?? color;
 
+  // NOT: Artık maxLines'a göre kesmiyoruz — kaç görsel satır tutacağını
+  // wrap + shrink döngüsü belirliyor.
   const lines = children
     .split(/\r?\n|\\n/)
     .map((l) => l.trim())
-    .filter(Boolean)
-    .slice(0, maxLines);
+    .filter(Boolean);
 
-  const measureRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const measureRefs = useRef<(HTMLDivElement | null)[]>([]);
   const cap = maxSize ?? size;
   const [fontSize, setFontSize] = useState(cap);
 
@@ -106,24 +119,30 @@ export default function Sentence({
     }
   };
 
-  // Kendi doğal boyutunu hesapla (sizeOverride'dan BAĞIMSIZ — her zaman
-  // kendi kısıtına göre hesaplanır, sadece render'da override kullanılabilir)
+  // Kendi doğal boyutunu hesapla: her font boyutunda tüm satırların
+  // (wrap edilmiş hâliyle) toplam görsel satır sayısını ölç, maxLines'a
+  // sığana kadar küçült.
   useLayoutEffect(() => {
     if (fit !== "shrink" || !contentWidth) return;
     let cancelled = false;
     const runMeasure = () => {
       if (cancelled) return;
       let currentSize = cap;
-      const widestFits = () => {
-        let widest = 0;
+
+      const totalLinesAt = (fontSizePx: number) => {
+        let total = 0;
         for (const el of measureRefs.current) {
           if (!el) continue;
-          el.style.fontSize = `${currentSize}px`;
-          widest = Math.max(widest, el.scrollWidth);
+          el.style.fontSize = `${fontSizePx}px`;
+          total += countWrappedLines(el);
         }
-        return widest <= contentWidth;
+        return total;
       };
-      while (!widestFits() && currentSize > 1) currentSize -= 1;
+
+      while (totalLinesAt(currentSize) > maxLines && currentSize > 1) {
+        currentSize -= 1;
+      }
+
       setFontSize(currentSize);
       onNaturalSize?.(currentSize);
     };
@@ -134,7 +153,6 @@ export default function Sentence({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, contentWidth, fit, cap, maxLines]);
 
-  // Render edilecek gerçek boyut: override varsa o, yoksa kendi hesabı
   const activeFontSize =
     fit === "shrink" ? sizeOverride ?? fontSize : sizeOverride ?? size;
 
@@ -150,7 +168,7 @@ export default function Sentence({
       }}
     >
       {lines.map((line, i) => (
-        <span
+        <div
           key={i}
           ref={(el) => {
             measureRefs.current[i] = el;
@@ -160,12 +178,13 @@ export default function Sentence({
           style={{
             fontSize: `${size}px`,
             WebkitTextStroke: strokeWidth ? `${strokeWidth}px currentColor` : undefined,
-            display: "inline-block",
-            whiteSpace: "nowrap",
+            width: contentWidth ? `${contentWidth}px` : undefined,
+            whiteSpace: contentWidth ? "normal" : "nowrap",
+            wordBreak: "break-word",
           }}
         >
           {line}
-        </span>
+        </div>
       ))}
     </div>
   );
@@ -196,6 +215,7 @@ export default function Sentence({
               display: "inline-block",
               lineHeight: 1,
               transform: finalShift ? `translateX(${finalShift}px)` : undefined,
+              maxWidth: contentWidth ? `${contentWidth}px` : undefined,
             }}
           >
             <span
@@ -219,7 +239,10 @@ export default function Sentence({
                 fontSize: `${activeFontSize}px`,
                 WebkitTextStroke: strokeWidth ? `${strokeWidth}px currentColor` : undefined,
                 color: resolvedColor,
-                whiteSpace: "nowrap",
+                whiteSpace: contentWidth ? "normal" : "nowrap",
+                wordBreak: "break-word",
+                textAlign: align,
+                maxWidth: contentWidth ? `${contentWidth}px` : undefined,
               }}
             >
               {line}
