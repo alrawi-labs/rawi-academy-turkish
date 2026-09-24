@@ -39,7 +39,6 @@ export default function WordOfDayAnswer({ data }: TemplateProps<PgData>) {
         />
       </div>
 
-      {/* Konum TAHMİNİ - dev server'da görünce birlikte ayarlayacağız */}
       <div
         style={{
           position: "absolute",

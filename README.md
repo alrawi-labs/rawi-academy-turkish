@@ -58,15 +58,11 @@ Every template is opened using a URL like this:
 
 ```js
 const data = {
-  "word2": "Bakmak",
-  "meaning2": "ينظر / يَنظُر إلى شيء",
-  "explain2": "تُستخدم لما يكون المقصود توجيه النظر أو النظر إلى شيء",
-  "example2": "Bana bak!",
-  "answer2": "! انظر إليّ",
-
+  "question": "انت بالمطعم وتريد تقول\nانا شبعان\nشنو تقول؟",
+  "options": ["Acım", "Mutluyum", "Tokum", "Tekrar"]
 }
 
-console.log("http://localhost:5173/render/difference_tow_words_meaning2?data=" + encodeURIComponent(JSON.stringify(data)));
+console.log("http://localhost:5173/render/quick_test_cover?data=" + encodeURIComponent(JSON.stringify(data)));
 ```
 
 # Example Links

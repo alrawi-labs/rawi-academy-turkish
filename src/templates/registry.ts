@@ -46,6 +46,24 @@ import DifferenceTowWordsMeaning2 from "./difference_tow_words/meaning2";
 import DifferenceTowWordsSelfTest from "./difference_tow_words/SelfTest";
 import DifferenceTowWordsAnswer from "./difference_tow_words/Answer";
 import DifferenceTowWordsExamples from "./difference_tow_words/Examples";
+import OneWordManyUsesCover from "./one_word_many_uses/Cover";
+import OneWordManyUsesUsage from "./one_word_many_uses/Usage";
+import OneWordManyUsesQuestion from "./one_word_many_uses/Question";
+import TipsCover from "./tips/Cover";
+import TipsContent from "./tips/TipsContent";
+import TipsExample from "./tips/Example";
+import PopularProverbsCover from "./popular_proverbs/cover";
+import PopularProverbsDetail from "./popular_proverbs/PopularProverbsDetail";
+import PopularProverbsMeaning from "./popular_proverbs/Meaning";
+import PopularProverbsExample from "./popular_proverbs/Example";
+import PopularProverbsCta from "./popular_proverbs/Cta";
+import PopularProverbsLast from "./popular_proverbs/Last";
+import FiveWordCover from "./five_word/Cover";
+import FiveWordWords from "./five_word/Words";
+import FiveWordDetail from "./five_word/Details";
+import FiveWordPoll from "./five_word/Poll";
+import FiveWordStory from "./five_word/Story";
+import QuickTestCover from "./quick_test/Cover";
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T;
@@ -295,12 +313,114 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
   difference_tow_words_self_test: {
     key: "difference_tow_words_self_test",
     component: DifferenceTowWordsSelfTest,
-    size: canvasPresets.carousel, 
+    size: canvasPresets.carousel,
   },
   difference_tow_words_answer: {
     key: "difference_tow_words_answer",
     component: DifferenceTowWordsAnswer,
-    size: canvasPresets.carousel, 
+    size: canvasPresets.carousel,
+  },
+
+  // ---------- One Word Many Uses ----------
+
+  one_word_many_uses_cover: {
+    key: "one_word_many_uses_cover",
+    component: OneWordManyUsesCover,
+    size: canvasPresets.carousel,
+  },
+  one_word_many_uses_usage: {
+    key: "one_word_many_uses_usage",
+    component: OneWordManyUsesUsage,
+    size: canvasPresets.carousel,
+  },
+  one_word_many_uses_question: {
+    key: "one_word_many_uses_question",
+    component: OneWordManyUsesQuestion,
+    size: canvasPresets.carousel,
+  },
+
+  // ---------- Tips ----------
+
+  tips_cover: {
+    key: "tips_cover",
+    component: TipsCover,
+    size: canvasPresets.carousel,
+  },
+  tips_content: {
+    key: "tips_content",
+    component: TipsContent,
+    size: canvasPresets.carousel,
+  },
+  tips_example: {
+    key: "tips_example",
+    component: TipsExample,
+    size: canvasPresets.carousel,
+  },
+
+  // ---------- Popular Proverbs ----------
+  popular_proverbs_cover: {
+    key: "popular_proverbs_cover",
+    component: PopularProverbsCover,
+    size: canvasPresets.carousel,
+  },
+  popular_proverbs_detail: {
+    key: "popular_proverbs_detail",
+    component: PopularProverbsDetail,
+    size: canvasPresets.carousel,
+  },
+  popular_proverbs_meaning: {
+    key: "popular_proverbs_meaning",
+    component: PopularProverbsMeaning,
+    size: canvasPresets.carousel,
+  },
+  popular_proverbs_example: {
+    key: "popular_proverbs_example",
+    component: PopularProverbsExample,
+    size: canvasPresets.carousel,
+  },
+  popular_proverbs_cta: {
+    key: "popular_proverbs_cta",
+    component: PopularProverbsCta,
+    size: canvasPresets.carousel,
+  },
+  popular_proverbs_last: {
+    key: "popular_proverbs_last",
+    component: PopularProverbsLast,
+    size: canvasPresets.carousel,
+  },
+
+  // ---------- Five Word ----------
+  five_word_cover: {
+    key: "five_word_cover",
+    component: FiveWordCover,
+    size: canvasPresets.carousel,
+  },
+  five_word_words: {
+    key: "five_word_words",
+    component: FiveWordWords,
+    size: canvasPresets.carousel,
+  },
+  five_word_detail: {
+    key: "five_word_detail",
+    component: FiveWordDetail,
+    size: canvasPresets.carousel,
+  },
+  five_word_poll: {
+    key: "five_word_poll",
+    component: FiveWordPoll,
+    size: canvasPresets.carousel,
+  },
+  five_word_story: {
+    key: "five_word_story",
+    component: FiveWordStory,
+    size: canvasPresets.story,
+  },
+
+  // ---------- Quick Test ----------
+  quick_test_cover: {
+    key: "quick_test_cover",
+    component: QuickTestCover,
+    size: canvasPresets.carousel,
   },
 };
 
