@@ -1,5 +1,5 @@
 // components/canvas/Sentence.tsx
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { colors, type WordColor } from "../../design/tokens";
 
 type SentenceProps = {
@@ -37,22 +37,78 @@ type SentenceProps = {
   sizeOverride?: number;
 };
 
-// Bir elemanın (word-wrap sonrası) kaç görsel satıra yayıldığını sayar.
-// Satır sonu bir width/font-metrics fonksiyonudur, line-height'tan etkilenmez,
-// bu yüzden ölçüm elemanının satır yüksekliği render'dakiyle aynı olmak
-// zorunda değil.
-function countWrappedLines(el: HTMLElement): number {
-  const text = el.textContent;
-  if (!text || text.trim() === "") return 0;
-  const range = document.createRange();
-  range.selectNodeContents(el);
-  const rects = Array.from(range.getClientRects());
-  if (rects.length === 0) return 1;
-  const tops = new Set<number>();
-  for (const r of rects) {
-    tops.add(Math.round(r.top));
+// Body'ye eklenip tek kelime/aday metin genişliği ölçmek için kullanılan,
+// görünmez, "pre" (kırpılmayan) bir <span>.
+function createMeasureSpan(dir: string | undefined, strokeWidth: number): HTMLSpanElement {
+  const span = document.createElement("span");
+  span.style.position = "fixed";
+  span.style.visibility = "hidden";
+  span.style.pointerEvents = "none";
+  span.style.whiteSpace = "pre";
+  span.style.left = "-99999px";
+  span.style.top = "0";
+  span.className = "font-black";
+  if (dir) span.dir = dir;
+  if (strokeWidth) span.style.webkitTextStroke = `${strokeWidth}px currentColor`;
+  document.body.appendChild(span);
+  return span;
+}
+
+// Tek bir mantıksal satırı (bir \n parçası), verilen contentWidth'e göre
+// kelime kelime sararak birden fazla görsel satıra böler.
+function wrapLineToWidth(
+  text: string,
+  contentWidth: number,
+  measureSpan: HTMLSpanElement,
+  fontSizePx: number,
+): string[] {
+  measureSpan.style.fontSize = `${fontSizePx}px`;
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [];
+
+  const result: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    measureSpan.textContent = candidate;
+    const width = measureSpan.scrollWidth;
+
+    if (width <= contentWidth || !current) {
+      // Sığıyor, ya da satır zaten boş (tek kelime bile sığmasa da taşırılır)
+      current = candidate;
+    } else {
+      result.push(current);
+      current = word;
+    }
   }
-  return Math.max(1, tops.size);
+  if (current) result.push(current);
+
+  return result;
+}
+
+// Tüm mantıksal (\n ile ayrılmış) satırları sarıp düz bir görsel satır
+// listesine çevirir. contentWidth yoksa hiçbir şey sarılmaz (eski davranış).
+function wrapAllLines(
+  rawLines: string[],
+  contentWidth: number | undefined,
+  dir: string | undefined,
+  strokeWidth: number,
+  fontSizePx: number,
+): string[] {
+  if (!contentWidth || contentWidth <= 0 || typeof document === "undefined") {
+    return rawLines;
+  }
+  const measureSpan = createMeasureSpan(dir, strokeWidth);
+  try {
+    const result: string[] = [];
+    for (const line of rawLines) {
+      result.push(...wrapLineToWidth(line, contentWidth, measureSpan, fontSizePx));
+    }
+    return result.length ? result : rawLines;
+  } finally {
+    document.body.removeChild(measureSpan);
+  }
 }
 
 export default function Sentence({
@@ -96,14 +152,12 @@ export default function Sentence({
 
   const resolvedColor = colors.word[color as WordColor] ?? color;
 
-  // NOT: Artık maxLines'a göre kesmiyoruz — kaç görsel satır tutacağını
-  // wrap + shrink döngüsü belirliyor.
-  const lines = children
+  // \n ile ayrılmış "mantıksal" satırlar — henüz sarılmamış.
+  const rawLines = children
     .split(/\r?\n|\\n/)
     .map((l) => l.trim())
     .filter(Boolean);
 
-  const measureRefs = useRef<(HTMLDivElement | null)[]>([]);
   const cap = maxSize ?? size;
   const [fontSize, setFontSize] = useState(cap);
 
@@ -119,75 +173,53 @@ export default function Sentence({
     }
   };
 
-  // Kendi doğal boyutunu hesapla: her font boyutunda tüm satırların
-  // (wrap edilmiş hâliyle) toplam görsel satır sayısını ölç, maxLines'a
-  // sığana kadar küçült.
+  // 1) fit="shrink" ise: sarılmış toplam görsel satır sayısı maxLines'ı
+  // aşmayana kadar fontu küçült.
   useLayoutEffect(() => {
     if (fit !== "shrink" || !contentWidth) return;
     let cancelled = false;
-    const runMeasure = () => {
+    const run = () => {
       if (cancelled) return;
       let currentSize = cap;
-
-      const totalLinesAt = (fontSizePx: number) => {
-        let total = 0;
-        for (const el of measureRefs.current) {
-          if (!el) continue;
-          el.style.fontSize = `${fontSizePx}px`;
-          total += countWrappedLines(el);
-        }
-        return total;
-      };
-
-      while (totalLinesAt(currentSize) > maxLines && currentSize > 1) {
+      while (currentSize > 1) {
+        const wrapped = wrapAllLines(rawLines, contentWidth, dir, strokeWidth, currentSize);
+        if (wrapped.length <= maxLines) break;
         currentSize -= 1;
       }
-
       setFontSize(currentSize);
       onNaturalSize?.(currentSize);
     };
-    waitForFonts(runMeasure);
+    waitForFonts(run);
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [children, contentWidth, fit, cap, maxLines]);
+  }, [children, contentWidth, fit, cap, maxLines, dir, strokeWidth]);
 
   const activeFontSize =
     fit === "shrink" ? sizeOverride ?? fontSize : sizeOverride ?? size;
 
-  const measureBlock = (
-    <div
-      aria-hidden
-      style={{
-        position: "fixed",
-        visibility: "hidden",
-        pointerEvents: "none",
-        left: -99999,
-        top: 0,
-      }}
-    >
-      {lines.map((line, i) => (
-        <div
-          key={i}
-          ref={(el) => {
-            measureRefs.current[i] = el;
-          }}
-          dir={dir}
-          className="font-black"
-          style={{
-            fontSize: `${size}px`,
-            WebkitTextStroke: strokeWidth ? `${strokeWidth}px currentColor` : undefined,
-            width: contentWidth ? `${contentWidth}px` : undefined,
-            whiteSpace: contentWidth ? "normal" : "nowrap",
-            wordBreak: "break-word",
-          }}
-        >
-          {line}
-        </div>
-      ))}
-    </div>
-  );
+  // 2) Nihai boyutla, gerçekten render edilecek görsel satır listesini
+  // hesapla (her biri kendi kutusunu/offsetini alacak).
+  const [renderLines, setRenderLines] = useState<string[]>(rawLines);
+
+  useLayoutEffect(() => {
+    if (!contentWidth) {
+      setRenderLines(rawLines);
+      return;
+    }
+    let cancelled = false;
+    const run = () => {
+      if (cancelled) return;
+      const wrapped = wrapAllLines(rawLines, contentWidth, dir, strokeWidth, activeFontSize);
+      if (!cancelled) setRenderLines(wrapped);
+    };
+    waitForFonts(run);
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [children, contentWidth, activeFontSize, dir, strokeWidth]);
 
   const justify =
     align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center";
@@ -202,7 +234,7 @@ export default function Sentence({
         width: resolvedWidth ? `${resolvedWidth}px` : undefined,
       }}
     >
-      {lines.map((line, i) => {
+      {renderLines.map((line, i) => {
         const isOdd = i % 2 === 1;
         const shift = isOdd ? stagger : 0;
         const finalShift = staggerReverse ? -shift : shift;
@@ -215,7 +247,6 @@ export default function Sentence({
               display: "inline-block",
               lineHeight: 1,
               transform: finalShift ? `translateX(${finalShift}px)` : undefined,
-              maxWidth: contentWidth ? `${contentWidth}px` : undefined,
             }}
           >
             <span
@@ -239,10 +270,7 @@ export default function Sentence({
                 fontSize: `${activeFontSize}px`,
                 WebkitTextStroke: strokeWidth ? `${strokeWidth}px currentColor` : undefined,
                 color: resolvedColor,
-                whiteSpace: contentWidth ? "normal" : "nowrap",
-                wordBreak: "break-word",
-                textAlign: align,
-                maxWidth: contentWidth ? `${contentWidth}px` : undefined,
+                whiteSpace: "nowrap",
               }}
             >
               {line}
@@ -253,13 +281,6 @@ export default function Sentence({
     </div>
   );
 
-  const wrapped = (
-    <>
-      {measureBlock}
-      {linesBlock}
-    </>
-  );
-
   if (
     top === undefined &&
     left === undefined &&
@@ -267,7 +288,7 @@ export default function Sentence({
     !centerX &&
     !centerY
   )
-    return wrapped;
+    return linesBlock;
 
   const horizontal =
     right !== undefined
@@ -290,7 +311,7 @@ export default function Sentence({
                 : undefined,
       }}
     >
-      {wrapped}
+      {linesBlock}
     </div>
   );
 }

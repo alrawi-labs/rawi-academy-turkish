@@ -58,11 +58,11 @@ Every template is opened using a URL like this:
 
 ```js
 const data = {
-  "correctIndex": 3,
-  "meaning": "انا شبعان"
+  "sentenceAr": "Bugün hava çok güzel",
+  "sentenceTr": "اليوم الطقس جميل جداً",
 }
 
-console.log("http://localhost:5173/render/quick_test_answer?data=" + encodeURIComponent(JSON.stringify(data)));
+console.log("http://localhost:5173/render/stories_sentence_of_day?data=" + encodeURIComponent(JSON.stringify(data)));
 ```
 
 # Example Links

@@ -65,6 +65,13 @@ import FiveWordPoll from "./five_word/Poll";
 import FiveWordStory from "./five_word/Story";
 import QuickTestCover from "./quick_test/Cover";
 import QuickTestAnswer from "./quick_test/Answer";
+import SituationCover from "./situation/Cover";
+import SituationAnswer from "./situation/Answer";
+import StoriesTestYourTurkish from "./stories/test_your_turkish";
+import StoriesTestYourUnderstanding from "./stories/test_your_understanding";
+import StoriesClock from "./stories/Clock";
+import StoriesExamOfDay from "./stories/ExamOfDay";
+import StoriesSentenceOfDay from "./stories/SentenceOfDay";
 
 export type TemplateProps<T = Record<string, unknown>> = {
   data: T;
@@ -427,6 +434,50 @@ export const templateRegistry: Record<string, TemplateDefinition> = {
     key: "quick_test_answer",
     component: QuickTestAnswer,
     size: canvasPresets.carousel,
+  },
+
+  // ---------- Situation ----------
+
+  situation_cover: {
+    key: "situation_cover",
+    component: SituationCover,
+    size: canvasPresets.carousel,
+  },
+  situation_answer: {
+    key: "situation_answer",
+    component: SituationAnswer,
+    size: canvasPresets.carousel,
+  },
+
+  // -------------------------------------------------
+  // -------------------- Stories --------------------
+  // -------------------------------------------------
+
+  // ---------- Test Your Turkish ----------
+  stories_test_your_turkish: {
+    key: "stories_test_your_turkish",
+    component: StoriesTestYourTurkish,
+    size: canvasPresets.story,
+  },
+  stories_test_your_understanding: {
+    key: "stories_test_your_understanding",
+    component: StoriesTestYourUnderstanding,
+    size: canvasPresets.story,
+  },
+  stories_clock: {
+    key: "stories_clock",
+    component: StoriesClock,
+    size: canvasPresets.story,
+  },
+  stories_exam_of_day: {
+    key: "stories_exam_of_day",
+    component: StoriesExamOfDay,
+    size: canvasPresets.story,
+  },
+  stories_sentence_of_day: {
+    key: "stories_sentence_of_day",
+    component: StoriesSentenceOfDay,
+    size: canvasPresets.story,
   },
 };
 
